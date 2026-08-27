@@ -1,0 +1,65 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ProjectCard from "@/components/ProjectCard.astro";
+import TagFilter from "@/components/TagFilter.astro";
+import EmptyState from "@/components/EmptyState.astro";
+import { t } from "@/i18n/dictionary";
+import { sectionPath } from "@/i18n/config";
+import { withBase } from "@/lib/url";
+import { byLocale, byDateDesc, entrySlug } from "@/lib/content";
+
+const locale = "es" as const;
+const dict = t(locale);
+
+const entries = byDateDesc(byLocale(await getCollection("portfolio"), locale));
+const tags = [...new Set(entries.flatMap((e) => e.data.tags))].sort();
+const languages = [...new Set(entries.map((e) => e.data.documentLanguage))];
+
+const langTargets = { en: "/en/portfolio/", es: "/es/portfolio/" };
+---
+
+<BaseLayout
+  locale={locale}
+  title={dict.section.portfolio.title}
+  description={dict.section.portfolio.intro}
+  path="/es/portfolio/"
+  alternates={{ en: "/en/portfolio/", es: "/es/portfolio/" }}
+  langTargets={langTargets}
+  current="portfolio"
+>
+  <section class="section">
+    <div class="container">
+      <h1>{dict.section.portfolio.title}</h1>
+      <p class="measure-wide">{dict.section.portfolio.intro}</p>
+
+      {entries.length > 0 && (
+        <TagFilter locale={locale} tags={tags} languages={languages} targetListId="portfolio-list" />
+      )}
+
+      {
+        entries.length === 0 ? (
+          <EmptyState locale={locale} />
+        ) : (
+          <div id="portfolio-list" class="grid grid--3">
+            {entries.map((entry) => (
+              <div data-tags={entry.data.tags.join("|")} data-language={entry.data.documentLanguage}>
+                <ProjectCard
+                  href={withBase(`${sectionPath("portfolio", locale)}${entrySlug(entry)}/`)}
+                  title={entry.data.title}
+                  subtitle={entry.data.subtitle}
+                  description={entry.data.description}
+                  date={entry.data.date}
+                  status={entry.data.status}
+                  featured={entry.data.featured}
+                  skills={entry.data.skills}
+                  locale={locale}
+                />
+              </div>
+            ))}
+          </div>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>

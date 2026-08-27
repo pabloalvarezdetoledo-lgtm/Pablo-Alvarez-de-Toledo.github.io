@@ -1,0 +1,38 @@
+---
+import { Picture } from "astro:assets";
+
+export interface Props {
+  src: ImageMetadata;
+  alt: string;
+  widths?: number[];
+  sizes?: string;
+  loading?: "lazy" | "eager";
+  fetchpriority?: "high" | "low" | "auto";
+  focalPoint?: string;
+  class?: string;
+}
+
+const {
+  src,
+  alt,
+  widths = [480, 768, 1080, 1440],
+  sizes = "(min-width: 72rem) 60rem, 100vw",
+  loading = "lazy",
+  fetchpriority = "auto",
+  focalPoint,
+  class: className,
+} = Astro.props;
+---
+
+<Picture
+  src={src}
+  alt={alt}
+  widths={widths}
+  sizes={sizes}
+  loading={loading}
+  fetchpriority={fetchpriority}
+  formats={["avif", "webp"]}
+  fallbackFormat="jpg"
+  class={className}
+  style={focalPoint ? `object-position:${focalPoint};` : undefined}
+/>

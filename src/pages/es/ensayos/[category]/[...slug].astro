@@ -1,0 +1,141 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import EntryCover from "@/components/EntryCover.astro";
+import CitationBlock from "@/components/CitationBlock.astro";
+import RelatedContent from "@/components/RelatedContent.astro";
+import { t } from "@/i18n/dictionary";
+import { sectionPath, essayCategorySlugs, essayCategoryPath, type EssayCategoryKey } from "@/i18n/config";
+import { entrySlug, findTranslation } from "@/lib/content";
+import { categoryThemes } from "@/site.config";
+import { resolveResearchRelated, resolvePortfolioRelated } from "@/lib/related";
+import { articleSchema, breadcrumbSchema } from "@/lib/structuredData";
+
+const locale = "es" as const;
+
+export async function getStaticPaths() {
+  const entries = await getCollection("essays");
+  const es = entries.filter((e) => e.id.startsWith("es/"));
+  return es.map((entry) => ({
+    params: {
+      category: essayCategorySlugs[entry.data.category as EssayCategoryKey].es,
+      slug: entry.id.replace(/^es\//, ""),
+    },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const dict = t(locale);
+const theme = categoryThemes[entry.data.category];
+
+const allEssays = await getCollection("essays");
+const englishTranslation = findTranslation(allEssays, entry.data.translationKey, "en");
+const path = essayCategoryPath(entry.data.category, locale) + entrySlug(entry) + "/";
+const langTargets = {
+  es: path,
+  en: englishTranslation
+    ? essayCategoryPath(englishTranslation.data.category as EssayCategoryKey, "en") + entrySlug(englishTranslation) + "/"
+    : essayCategoryPath(entry.data.category, "en"),
+};
+
+const related = [
+  ...(await resolveResearchRelated(entry.data.relatedResearch, locale, dict.nav.research)),
+  ...(await resolvePortfolioRelated(entry.data.relatedPortfolio, locale, dict.nav.portfolio)),
+];
+
+const structuredData = [
+  articleSchema(Astro.site, {
+    title: entry.data.title,
+    description: entry.data.description,
+    date: entry.data.date,
+    updatedDate: entry.data.updatedDate,
+    path,
+  }),
+  breadcrumbSchema(Astro.site, [
+    { name: dict.nav.essays, path: sectionPath("essays", locale) },
+    { name: theme.es, path: essayCategoryPath(entry.data.category, locale) },
+    { name: entry.data.title, path },
+  ]),
+];
+---
+
+<BaseLayout
+  locale={locale}
+  title={entry.data.title}
+  description={entry.data.description}
+  path={path}
+  alternates={langTargets}
+  langTargets={langTargets}
+  current="essays"
+  seoType="article"
+  structuredData={structuredData}
+>
+  <article class="section entry" style={`--accent:${theme.accent};`}>
+    <div class="container measure-wide">
+      <Breadcrumbs
+        items={[
+          { label: dict.nav.essays, href: sectionPath("essays", locale) },
+          { label: theme.es, href: essayCategoryPath(entry.data.category, locale) },
+          { label: entry.data.title },
+        ]}
+      />
+
+      <p class="eyebrow" style="color:var(--accent)">{theme.es}</p>
+      <h1>{entry.data.title}</h1>
+      {entry.data.subtitle && <p class="entry__subtitle">{entry.data.subtitle}</p>}
+
+      <div class="entry__meta">
+        <span>{dict.doc.date}: {new Intl.DateTimeFormat("es-ES", { year: "numeric", month: "long", day: "numeric" }).format(entry.data.date)}</span>
+        <span>{dict.doc.language}: {entry.data.documentLanguage.toUpperCase()}</span>
+      </div>
+
+      <EntryCover
+        title={entry.data.title}
+        category={entry.data.category}
+        locale={locale}
+        cover={entry.data.cover}
+        coverAlt={entry.data.coverAlt}
+        coverCaption={entry.data.coverCaption}
+        coverCredit={entry.data.coverCredit}
+        focalPoint={entry.data.focalPoint}
+        loading="eager"
+      />
+
+      <div class="entry__body">
+        <Content />
+      </div>
+
+      {entry.data.tags.length > 0 && (
+        <ul class="card__tags">{entry.data.tags.map((tag) => <li class="tag">{tag}</li>)}</ul>
+      )}
+
+      {entry.data.citation && <CitationBlock locale={locale} citation={entry.data.citation} />}
+
+      <RelatedContent locale={locale} items={related} />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .entry__subtitle {
+    font-size: var(--step-1);
+    color: var(--fg-muted);
+  }
+  .entry__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    font-size: var(--step--1);
+    color: var(--fg-muted);
+    margin-bottom: var(--space-6);
+  }
+  .entry :global(.entry-cover) {
+    margin-bottom: var(--space-6);
+  }
+  .entry__body {
+    margin-top: var(--space-6);
+  }
+</style>

@@ -1,0 +1,132 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import LessonCard from "@/components/LessonCard.astro";
+import RelatedContent from "@/components/RelatedContent.astro";
+import { t } from "@/i18n/dictionary";
+import { sectionPath } from "@/i18n/config";
+import { entrySlug, findTranslation, byLocale } from "@/lib/content";
+import { resolveResearchRelated } from "@/lib/related";
+import { courseSchema, breadcrumbSchema } from "@/lib/structuredData";
+import { withBase } from "@/lib/url";
+
+const locale = "es" as const;
+
+export async function getStaticPaths() {
+  const entries = await getCollection("courses");
+  const es = entries.filter((e) => e.id.startsWith("es/"));
+  return es.map((entry) => ({
+    params: { slug: entry.id.replace(/^es\//, "") },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const dict = t(locale);
+
+const allCourses = await getCollection("courses");
+const englishTranslation = findTranslation(allCourses, entry.data.translationKey, "en");
+const path = `${sectionPath("classes", locale)}${entrySlug(entry)}/`;
+const langTargets = {
+  es: path,
+  en: englishTranslation
+    ? `${sectionPath("classes", "en")}${entrySlug(englishTranslation)}/`
+    : sectionPath("classes", "en"),
+};
+
+const allLessons = byLocale(await getCollection("lessons"), locale);
+const modules = entry.data.modules.map((module) => ({
+  ...module,
+  lessons: module.lessons
+    .map((key) => allLessons.find((l) => l.data.translationKey === key))
+    .filter((l): l is NonNullable<typeof l> => Boolean(l)),
+}));
+
+const related = await resolveResearchRelated(entry.data.relatedResearch, locale, dict.nav.research);
+
+const structuredData = [
+  courseSchema(Astro.site, { title: entry.data.title, description: entry.data.description, path }),
+  breadcrumbSchema(Astro.site, [
+    { name: dict.nav.classes, path: sectionPath("classes", locale) },
+    { name: entry.data.title, path },
+  ]),
+];
+---
+
+<BaseLayout
+  locale={locale}
+  title={entry.data.title}
+  description={entry.data.description}
+  path={path}
+  alternates={langTargets}
+  langTargets={langTargets}
+  current="classes"
+  structuredData={structuredData}
+>
+  <article class="section entry">
+    <div class="container measure-wide">
+      <Breadcrumbs items={[{ label: dict.nav.classes, href: sectionPath("classes", locale) }, { label: entry.data.title }]} />
+
+      <h1>{entry.data.title}</h1>
+      {entry.data.subtitle && <p class="entry__subtitle">{entry.data.subtitle}</p>}
+      <p>{entry.data.description}</p>
+
+      <div class="entry__meta">
+        <span>{dict.course.subject}: {entry.data.subject}</span>
+        <span>{dict.course.difficulty}: {entry.data.difficulty}</span>
+        <span>{dict.course.duration}: {entry.data.estimatedDuration}</span>
+      </div>
+
+      <div class="entry__body">
+        <Content />
+      </div>
+
+      <h2>{dict.course.modules}</h2>
+      {
+        modules.map((module) => (
+          <div class="module">
+            <h3>{module.title}</h3>
+            {module.description && <p class="module__description">{module.description}</p>}
+            {module.lessons.map((lesson) => (
+              <LessonCard
+                href={withBase(`${path}${entrySlug(lesson)}/`)}
+                order={lesson.data.order}
+                title={lesson.data.title}
+                description={lesson.data.description}
+                estimatedDuration={lesson.data.estimatedDuration}
+                hasVideo={Boolean(lesson.data.youtubeId)}
+                locale={locale}
+              />
+            ))}
+          </div>
+        ))
+      }
+
+      <RelatedContent locale={locale} items={related} />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .entry__subtitle {
+    font-size: var(--step-1);
+    color: var(--fg-muted);
+  }
+  .entry__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    font-size: var(--step--1);
+    color: var(--fg-muted);
+    margin: var(--space-4) 0 var(--space-6);
+  }
+  .module {
+    margin-bottom: var(--space-7);
+  }
+  .module__description {
+    color: var(--fg-muted);
+    font-size: var(--step--1);
+  }
+</style>

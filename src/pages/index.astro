@@ -1,0 +1,6 @@
+---
+import { withBase } from "@/lib/url";
+// `astro check` cannot trace usage through a bare frontmatter `return`;
+// the hint it raises here is a known false positive, not a real bug.
+return Astro.redirect(withBase("/en/"), 302);
+---

@@ -1,0 +1,66 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PublicationCard from "@/components/PublicationCard.astro";
+import TagFilter from "@/components/TagFilter.astro";
+import EmptyState from "@/components/EmptyState.astro";
+import { t } from "@/i18n/dictionary";
+import { sectionPath } from "@/i18n/config";
+import { withBase } from "@/lib/url";
+import { byLocale, byDateDesc, entrySlug } from "@/lib/content";
+
+const locale = "en" as const;
+const dict = t(locale);
+
+const entries = byDateDesc(byLocale(await getCollection("research"), locale));
+const tags = [...new Set(entries.flatMap((e) => e.data.tags))].sort();
+const languages = [...new Set(entries.map((e) => e.data.documentLanguage))];
+
+const langTargets = { en: "/en/research/", es: "/es/investigacion/" };
+---
+
+<BaseLayout
+  locale={locale}
+  title={dict.section.research.title}
+  description={dict.section.research.intro}
+  path="/en/research/"
+  alternates={{ en: "/en/research/", es: "/es/investigacion/" }}
+  langTargets={langTargets}
+  current="research"
+>
+  <section class="section">
+    <div class="container">
+      <h1>{dict.section.research.title}</h1>
+      <p class="measure-wide">{dict.section.research.intro}</p>
+
+      {entries.length > 0 && (
+        <TagFilter locale={locale} tags={tags} languages={languages} targetListId="research-list" />
+      )}
+
+      {
+        entries.length === 0 ? (
+          <EmptyState locale={locale} />
+        ) : (
+          <div id="research-list" class="grid grid--2">
+            {entries.map((entry) => (
+              <div data-tags={entry.data.tags.join("|")} data-language={entry.data.documentLanguage}>
+                <PublicationCard
+                  href={withBase(`${sectionPath("research", locale)}${entrySlug(entry)}/`)}
+                  title={entry.data.title}
+                  subtitle={entry.data.subtitle}
+                  description={entry.data.description}
+                  date={entry.data.date}
+                  category={entry.data.category}
+                  status={entry.data.status}
+                  featured={entry.data.featured}
+                  tags={entry.data.tags}
+                  locale={locale}
+                />
+              </div>
+            ))}
+          </div>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>

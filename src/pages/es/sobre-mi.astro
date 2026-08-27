@@ -1,0 +1,110 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { t } from "@/i18n/dictionary";
+import { sectionPath } from "@/i18n/config";
+import { withBase } from "@/lib/url";
+import { bio } from "@/site.config";
+import { profilePageSchema } from "@/lib/structuredData";
+
+const locale = "es" as const;
+const dict = t(locale);
+const langTargets = { en: "/en/about/", es: "/es/sobre-mi/" };
+---
+
+<BaseLayout
+  locale={locale}
+  title={dict.about.title}
+  description="Cómo encajan la Economía y los Negocios Internacionales, la experiencia en BBVA, la formación financiera en el IEB, y un interés continuado por la economía política y la filosofía."
+  path="/es/sobre-mi/"
+  alternates={{ en: "/en/about/", es: "/es/sobre-mi/" }}
+  langTargets={langTargets}
+  current="about"
+  seoType="profile"
+  structuredData={profilePageSchema(Astro.site, "/es/sobre-mi/")}
+>
+  <section class="section">
+    <div class="container measure-wide">
+      <h1>{dict.about.title}</h1>
+
+      <p>
+        Este sitio sigue una única línea de razonamiento a través de campos formalmente distintos. La Economía y los
+        Negocios Internacionales aportaron el vocabulario analítico —cómo interactúan los mercados, las empresas y
+        los países— que la experiencia en BBVA puso después a prueba frente al detalle práctico de una institución
+        financiera real. La formación financiera en el IEB añadió el aparato técnico de la valoración y los mercados
+        que conecta ese vocabulario con la fijación de precios de activos concretos.
+      </p>
+      <p>
+        La banca de inversión y las finanzas corporativas son, en esta perspectiva, el extremo aplicado de la
+        economía monetaria: las decisiones sobre estructura de capital, valoración y operaciones se toman dentro de
+        las restricciones que fijan las instituciones monetarias y los mercados financieros. La econometría y las
+        finanzas cuantitativas son la disciplina que mantiene honestas esas afirmaciones sobre las restricciones: una
+        afirmación sobre cómo la liquidez o la duración afectan a la valoración vale lo que valga el método empleado
+        para contrastarla.
+      </p>
+      <p>
+        El interés por la economía política y la filosofía no es una desviación de esto: es lo que mantiene honesto
+        al trabajo económico y financiero respecto de sus propios supuestos —sobre las instituciones, sobre los
+        derechos y sobre qué es una persona, con anterioridad a cualquier mercado o cualquier ordenamiento jurídico.
+      </p>
+
+      <h2>Formación</h2>
+      <ul class="timeline">
+        {bio.es.education.map((item) => (
+          <li>
+            <h3>{item.title}</h3>
+            <p>{item.detail}</p>
+          </li>
+        ))}
+      </ul>
+
+      <h2>Experiencia</h2>
+      <ul class="timeline">
+        {bio.es.experience.map((item) => (
+          <li>
+            <h3>{item.title}</h3>
+            <p>{item.detail}</p>
+          </li>
+        ))}
+      </ul>
+
+      <p class="disclaimer">
+        Nota: esta página describe la conexión general entre la formación académica y profesional de Pablo y el
+        programa de investigación de este sitio. No revela información confidencial o interna de ninguna
+        organización mencionada arriba.
+      </p>
+
+      <div class="about__actions">
+        <a class="button button--primary" href={withBase(sectionPath("cv", locale))}>{dict.home.heroCvLabel}</a>
+        <a class="button" href={withBase(sectionPath("contact", locale))}>{dict.home.heroContactLabel}</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .timeline {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--space-7);
+    display: grid;
+    gap: var(--space-5);
+  }
+  .timeline li {
+    border-left: 2px solid var(--accent);
+    padding-left: var(--space-4);
+  }
+  .timeline h3 {
+    margin-bottom: var(--space-1);
+  }
+  .disclaimer {
+    font-size: var(--step--1);
+    color: var(--fg-muted);
+    border-top: var(--border-thin);
+    padding-top: var(--space-4);
+  }
+  .about__actions {
+    display: flex;
+    gap: var(--space-4);
+    margin-top: var(--space-6);
+  }
+</style>

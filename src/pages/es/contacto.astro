@@ -1,0 +1,59 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { t } from "@/i18n/dictionary";
+import { person } from "@/site.config";
+
+const locale = "es" as const;
+const dict = t(locale);
+const langTargets = { en: "/en/contact/", es: "/es/contacto/" };
+---
+
+<BaseLayout
+  locale={locale}
+  title={dict.contact.title}
+  description={dict.contact.invite}
+  path="/es/contacto/"
+  alternates={{ en: "/en/contact/", es: "/es/contacto/" }}
+  langTargets={langTargets}
+>
+  <section class="section">
+    <div class="container measure">
+      <h1>{dict.contact.title}</h1>
+      <p>{dict.contact.invite}</p>
+
+      <dl class="contact-list">
+        <div>
+          <dt>{dict.contact.email}</dt>
+          <dd><a href={`mailto:${person.email}`}>{person.email}</a></dd>
+        </div>
+        <div>
+          <dt>{dict.contact.linkedin}</dt>
+          <dd><a href={person.linkedin}>{person.linkedin}</a></dd>
+        </div>
+        <div>
+          <dt>{dict.contact.github}</dt>
+          <dd><a href={person.github}>{person.github}</a></dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .contact-list {
+    display: grid;
+    gap: var(--space-5);
+    margin-top: var(--space-6);
+  }
+  .contact-list dt {
+    font-size: var(--step--1);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--fg-muted);
+    font-weight: 600;
+  }
+  .contact-list dd {
+    margin: var(--space-1) 0 0;
+    font-size: var(--step-1);
+  }
+</style>

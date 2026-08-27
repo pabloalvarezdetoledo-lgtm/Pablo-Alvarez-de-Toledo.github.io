@@ -1,0 +1,205 @@
+---
+import Monogram from "./Monogram.astro";
+import LanguageSelector from "./LanguageSelector.astro";
+import { sectionPath, type Locale, type SectionKey } from "@/i18n/config";
+import { t } from "@/i18n/dictionary";
+import { withBase } from "@/lib/url";
+
+export interface Props {
+  locale: Locale;
+  langTargets: Record<Locale, string>;
+  current?: SectionKey;
+}
+
+const { locale, langTargets, current } = Astro.props;
+const nav = t(locale).nav;
+
+const links: { key: SectionKey; label: string }[] = [
+  { key: "research", label: nav.research },
+  { key: "portfolio", label: nav.portfolio },
+  { key: "essays", label: nav.essays },
+  { key: "classes", label: nav.classes },
+  { key: "about", label: nav.about },
+];
+---
+
+<header class="site-header">
+  <div class="container site-header__bar">
+    <a href={withBase(`/${locale}/`)} class="site-header__brand" aria-label="Pablo Álvarez de Toledo — homepage">
+      <Monogram />
+    </a>
+
+    <button
+      id="nav-toggle"
+      class="site-header__toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="primary-nav"
+    >
+      <span class="visually-hidden">{nav.menu}</span>
+      <span class="site-header__toggle-icon" aria-hidden="true"></span>
+    </button>
+
+    <nav id="primary-nav" class="site-header__nav" aria-label="Primary">
+      <ul>
+        {
+          links.map((link) => (
+            <li>
+              <a
+                href={withBase(sectionPath(link.key, locale))}
+                aria-current={current === link.key ? "page" : undefined}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="site-header__actions">
+        <a class="button button--ghost" href={withBase(sectionPath("cv", locale))}>{nav.cv}</a>
+        <LanguageSelector locale={locale} targets={langTargets} />
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.getElementById("nav-toggle");
+  const nav = document.getElementById("primary-nav");
+  if (toggle && nav) {
+    toggle.addEventListener("click", () => {
+      const expanded = toggle.getAttribute("aria-expanded") === "true";
+      toggle.setAttribute("aria-expanded", String(!expanded));
+      nav.classList.toggle("is-open", !expanded);
+    });
+  }
+</script>
+
+<style>
+  .site-header {
+    border-bottom: var(--border-thin);
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .site-header__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: var(--space-4);
+    gap: var(--space-4);
+  }
+
+  .site-header__brand {
+    text-decoration: none;
+  }
+
+  .site-header__toggle {
+    display: none;
+    background: none;
+    border: 1px solid var(--rule-strong);
+    border-radius: var(--radius);
+    width: 2.5rem;
+    height: 2.5rem;
+    position: relative;
+    cursor: pointer;
+  }
+
+  .site-header__toggle-icon,
+  .site-header__toggle-icon::before,
+  .site-header__toggle-icon::after {
+    content: "";
+    position: absolute;
+    left: 25%;
+    right: 25%;
+    height: 1px;
+    background: var(--fg);
+  }
+  .site-header__toggle-icon {
+    top: 50%;
+  }
+  .site-header__toggle-icon::before {
+    top: -0.4rem;
+  }
+  .site-header__toggle-icon::after {
+    top: 0.4rem;
+  }
+
+  .site-header__nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    flex: 1;
+    justify-content: flex-end;
+  }
+
+  .site-header__nav ul {
+    list-style: none;
+    display: flex;
+    gap: var(--space-5);
+    margin: 0;
+    padding: 0;
+  }
+
+  .site-header__nav a {
+    text-decoration: none;
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: var(--fg-muted);
+    padding: 0.3em 0;
+    border-bottom: 2px solid transparent;
+  }
+
+  .site-header__nav a:hover {
+    color: var(--fg);
+  }
+
+  .site-header__nav a[aria-current="page"] {
+    color: var(--fg);
+    border-bottom-color: var(--accent);
+  }
+
+  .site-header__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  @media (max-width: 860px) {
+    .site-header__toggle {
+      display: block;
+    }
+
+    .site-header__nav {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--bg);
+      border-bottom: var(--border-thin);
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-5);
+      padding: var(--space-5);
+      display: none;
+    }
+
+    .site-header__nav.is-open {
+      display: flex;
+    }
+
+    .site-header__nav ul {
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .site-header__actions {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-3);
+    }
+  }
+</style>

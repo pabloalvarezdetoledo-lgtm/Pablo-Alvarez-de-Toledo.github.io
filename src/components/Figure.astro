@@ -1,0 +1,40 @@
+---
+import ResponsiveImage from "./ResponsiveImage.astro";
+
+export interface Props {
+  src: ImageMetadata;
+  alt: string;
+  caption?: string;
+  credit?: string;
+  focalPoint?: string;
+  loading?: "lazy" | "eager";
+}
+
+const { src, alt, caption, credit, focalPoint, loading = "lazy" } = Astro.props;
+---
+
+<figure class="figure">
+  <ResponsiveImage src={src} alt={alt} focalPoint={focalPoint} loading={loading} />
+  {
+    (caption || credit) && (
+      <figcaption>
+        {caption}
+        {credit && <span class="figure__credit"> — {credit}</span>}
+      </figcaption>
+    )
+  }
+</figure>
+
+<style>
+  .figure {
+    margin: var(--space-6) 0;
+  }
+  .figure figcaption {
+    font-size: var(--step--1);
+    color: var(--fg-muted);
+    margin-top: var(--space-2);
+  }
+  .figure__credit {
+    font-style: italic;
+  }
+</style>

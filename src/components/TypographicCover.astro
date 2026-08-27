@@ -1,0 +1,73 @@
+---
+import { categoryThemes, type CategoryKey } from "@/site.config";
+import type { Locale } from "@/i18n/config";
+
+export interface Props {
+  title: string;
+  category?: CategoryKey;
+  locale: Locale;
+}
+
+const { title, category, locale } = Astro.props;
+const theme = category ? categoryThemes[category] : undefined;
+const accent = theme?.accent ?? "#142033";
+const accentSoft = theme?.accentSoft ?? "#efe9db";
+const label = theme ? theme[locale] : undefined;
+---
+
+<div class="cover" style={`--cover-accent:${accent}; --cover-soft:${accentSoft};`}>
+  <span class="cover__monogram" aria-hidden="true">PAT</span>
+  {label && <span class="cover__category">{label}</span>}
+  <span class="cover__title">{title}</span>
+  <span class="cover__rule" aria-hidden="true"></span>
+</div>
+
+<style>
+  .cover {
+    aspect-ratio: 4 / 3;
+    background: var(--cover-soft);
+    border: 1px solid var(--cover-accent);
+    color: var(--color-navy);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: var(--space-5);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover__monogram {
+    font-family: var(--font-display);
+    font-size: var(--step--1);
+    letter-spacing: 0.18em;
+    color: var(--cover-accent);
+  }
+
+  .cover__category {
+    position: absolute;
+    top: var(--space-5);
+    right: var(--space-5);
+    font-size: var(--step--1);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    color: var(--cover-accent);
+  }
+
+  .cover__title {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    line-height: 1.2;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .cover__rule {
+    display: block;
+    height: 3px;
+    width: 2.5rem;
+    background: var(--cover-accent);
+  }
+</style>

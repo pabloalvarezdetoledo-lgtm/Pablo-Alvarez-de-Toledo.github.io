@@ -1,0 +1,56 @@
+---
+import { t } from "@/i18n/dictionary";
+import type { Locale } from "@/i18n/config";
+
+export interface Props {
+  href: string;
+  order: number;
+  title: string;
+  description: string;
+  estimatedDuration?: string;
+  hasVideo: boolean;
+  locale: Locale;
+}
+
+const { href, order, title, description, estimatedDuration, hasVideo, locale } = Astro.props;
+const dict = t(locale);
+---
+
+<article class="lesson-card">
+  <span class="lesson-card__order" aria-hidden="true">{String(order).padStart(2, "0")}</span>
+  <div class="lesson-card__body">
+    <h4 class="lesson-card__title"><a href={href}>{title}</a></h4>
+    <p class="lesson-card__description">{description}</p>
+    <p class="card__meta">
+      {estimatedDuration && <span>{estimatedDuration}</span>}
+      {!hasVideo && <span>{dict.course.videoPending}</span>}
+    </p>
+  </div>
+</article>
+
+<style>
+  .lesson-card {
+    display: flex;
+    gap: var(--space-4);
+    padding: var(--space-4) 0;
+    border-bottom: var(--border-thin);
+  }
+  .lesson-card__order {
+    font-family: var(--font-display);
+    color: var(--fg-muted);
+    font-size: var(--step-1);
+    min-width: 2ch;
+  }
+  .lesson-card__title {
+    margin: 0 0 var(--space-2);
+  }
+  .lesson-card__title a {
+    text-decoration: none;
+    color: var(--fg);
+  }
+  .lesson-card__description {
+    margin: 0 0 var(--space-2);
+    color: var(--fg-muted);
+    font-size: var(--step--1);
+  }
+</style>

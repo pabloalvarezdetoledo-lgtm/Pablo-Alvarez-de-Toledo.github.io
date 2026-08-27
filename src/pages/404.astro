@@ -1,0 +1,32 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { withBase } from "@/lib/url";
+
+const locale = "en" as const;
+const langTargets = { en: "/en/", es: "/es/" };
+---
+
+<BaseLayout
+  locale={locale}
+  title="Page not found"
+  description="The page you are looking for does not exist or has moved."
+  path="/404/"
+  langTargets={langTargets}
+  noindex={true}
+>
+  <section class="section not-found">
+    <div class="container measure">
+      <p class="eyebrow">404</p>
+      <h1>Page not found</h1>
+      <p>The page you are looking for does not exist or has moved.</p>
+      <a class="button button--primary" href={withBase("/en/")}>Return to the homepage</a>
+
+      <hr class="rule" />
+
+      <p class="eyebrow">404</p>
+      <h1>Página no encontrada</h1>
+      <p>La página que buscas no existe o ha cambiado de ubicación.</p>
+      <a class="button button--primary" href={withBase("/es/")}>Volver al inicio</a>
+    </div>
+  </section>
+</BaseLayout>

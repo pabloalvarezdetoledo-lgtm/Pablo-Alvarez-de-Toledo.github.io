@@ -1,0 +1,87 @@
+---
+import { t } from "@/i18n/dictionary";
+import type { Locale } from "@/i18n/config";
+
+export interface Props {
+  locale: Locale;
+  tags: string[];
+  languages: string[];
+  targetListId: string;
+}
+const { locale, tags, languages, targetListId } = Astro.props;
+const dict = t(locale).filters;
+---
+
+<form class="tag-filter" data-target={targetListId} aria-label={dict.filterByTag}>
+  <div class="tag-filter__field">
+    <label for="filter-tag">{dict.filterByTag}</label>
+    <select id="filter-tag" name="tag">
+      <option value="">{dict.allTags}</option>
+      {tags.map((tag) => <option value={tag}>{tag}</option>)}
+    </select>
+  </div>
+  <div class="tag-filter__field">
+    <label for="filter-language">{dict.filterByLanguage}</label>
+    <select id="filter-language" name="language">
+      <option value="">{dict.allLanguages}</option>
+      {languages.map((lang) => <option value={lang}>{lang}</option>)}
+    </select>
+  </div>
+  <button type="reset" class="button button--ghost">{dict.clear}</button>
+</form>
+
+<style>
+  .tag-filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+  .tag-filter__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    font-size: var(--step--1);
+  }
+  .tag-filter select {
+    font: inherit;
+    padding: 0.4em 0.6em;
+    border: var(--border-thin);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--fg);
+  }
+</style>
+
+<script>
+  function initTagFilters() {
+    document.querySelectorAll<HTMLFormElement>(".tag-filter").forEach((form) => {
+      const targetId = form.dataset.target;
+      if (!targetId) return;
+      const list = document.getElementById(targetId);
+      if (!list) return;
+      const items = Array.from(list.querySelectorAll<HTMLElement>("[data-tags]"));
+
+      function apply() {
+        const tagSelect = form.querySelector<HTMLSelectElement>("#filter-tag, [name=tag]");
+        const langSelect = form.querySelector<HTMLSelectElement>("#filter-language, [name=language]");
+        const tag = tagSelect?.value ?? "";
+        const lang = langSelect?.value ?? "";
+        items.forEach((item) => {
+          const itemTags = (item.dataset.tags ?? "").split("|");
+          const itemLang = item.dataset.language ?? "";
+          const matchesTag = !tag || itemTags.includes(tag);
+          const matchesLang = !lang || itemLang === lang;
+          item.hidden = !(matchesTag && matchesLang);
+        });
+      }
+
+      form.addEventListener("change", apply);
+      form.addEventListener("reset", () => window.setTimeout(apply, 0));
+    });
+  }
+
+  initTagFilters();
+  document.addEventListener("astro:page-load", initTagFilters);
+</script>

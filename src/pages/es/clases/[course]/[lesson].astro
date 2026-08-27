@@ -1,0 +1,128 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import YouTubeEmbed from "@/components/YouTubeEmbed.astro";
+import DocumentActions from "@/components/DocumentActions.astro";
+import RelatedContent from "@/components/RelatedContent.astro";
+import { t } from "@/i18n/dictionary";
+import { sectionPath } from "@/i18n/config";
+import { entrySlug, byLocale, findTranslation } from "@/lib/content";
+import { resolveResearchRelated } from "@/lib/related";
+import { breadcrumbSchema } from "@/lib/structuredData";
+import { withBase } from "@/lib/url";
+
+const locale = "es" as const;
+
+export async function getStaticPaths() {
+  const lessons = byLocale(await getCollection("lessons"), "es");
+  const courses = byLocale(await getCollection("courses"), "es");
+  return lessons.map((lesson) => {
+    const course = courses.find((c) => c.data.translationKey === lesson.data.course);
+    return {
+      params: { course: course ? entrySlug(course) : "unknown", lesson: entrySlug(lesson) },
+      props: { lesson, course },
+    };
+  });
+}
+
+const { lesson, course } = Astro.props;
+const { Content } = await render(lesson);
+const dict = t(locale);
+
+const allLessons = await getCollection("lessons");
+const englishTranslation = findTranslation(allLessons, lesson.data.translationKey, "en");
+const allCoursesEn = byLocale(await getCollection("courses"), "en");
+const englishCourse = englishTranslation
+  ? allCoursesEn.find((c) => c.data.translationKey === englishTranslation.data.course)
+  : undefined;
+
+const coursePath = course ? `${sectionPath("classes", locale)}${entrySlug(course)}/` : sectionPath("classes", locale);
+const path = `${coursePath}${entrySlug(lesson)}/`;
+const langTargets = {
+  es: path,
+  en:
+    englishTranslation && englishCourse
+      ? `${sectionPath("classes", "en")}${entrySlug(englishCourse)}/${entrySlug(englishTranslation)}/`
+      : sectionPath("classes", "en"),
+};
+
+const related = await resolveResearchRelated(lesson.data.relatedResearch, locale, dict.nav.research);
+
+const structuredData = breadcrumbSchema(Astro.site, [
+  { name: dict.nav.classes, path: sectionPath("classes", locale) },
+  ...(course ? [{ name: course.data.title, path: coursePath }] : []),
+  { name: lesson.data.title, path },
+]);
+---
+
+<BaseLayout
+  locale={locale}
+  title={lesson.data.title}
+  description={lesson.data.description}
+  path={path}
+  alternates={langTargets}
+  langTargets={langTargets}
+  current="classes"
+  structuredData={structuredData}
+>
+  <article class="section entry">
+    <div class="container measure-wide">
+      <Breadcrumbs
+        items={[
+          { label: dict.nav.classes, href: sectionPath("classes", locale) },
+          ...(course ? [{ label: course.data.title, href: coursePath }] : []),
+          { label: lesson.data.title },
+        ]}
+      />
+
+      <p class="eyebrow">{dict.course.lessons} · {String(lesson.data.order).padStart(2, "0")}</p>
+      <h1>{lesson.data.title}</h1>
+      <p>{lesson.data.description}</p>
+
+      {
+        lesson.data.youtubeId ? (
+          <YouTubeEmbed youtubeId={lesson.data.youtubeId} title={lesson.data.title} />
+        ) : (
+          <p class="pending-note">{dict.course.videoPending}</p>
+        )
+      }
+
+      <DocumentActions locale={locale} code={lesson.data.code} data={lesson.data.data} />
+      {lesson.data.slides && (
+        <p><a class="button button--ghost" href={withBase(lesson.data.slides)}>{dict.course.slides}</a></p>
+      )}
+
+      <div class="entry__body">
+        <Content />
+      </div>
+
+      {lesson.data.bibliography.length > 0 && (
+        <section>
+          <h2>{dict.course.bibliography}</h2>
+          <ul>{lesson.data.bibliography.map((item) => <li>{item}</li>)}</ul>
+        </section>
+      )}
+      {lesson.data.exercises.length > 0 && (
+        <section>
+          <h2>{dict.course.exercises}</h2>
+          <ul>{lesson.data.exercises.map((item) => <li>{item}</li>)}</ul>
+        </section>
+      )}
+
+      <RelatedContent locale={locale} items={related} />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .pending-note {
+    color: var(--fg-muted);
+    font-style: italic;
+    border: 1px dashed var(--rule-strong);
+    padding: var(--space-5);
+  }
+  .entry__body {
+    margin-top: var(--space-6);
+  }
+</style>

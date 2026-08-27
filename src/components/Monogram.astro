@@ -1,0 +1,26 @@
+---
+export interface Props {
+  size?: "small" | "large";
+}
+const { size = "small" } = Astro.props;
+---
+
+<span class:list={["monogram", size === "large" && "monogram--large"]} aria-hidden="true">PAT</span>
+
+<style>
+  .monogram {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    font-size: var(--step-0);
+    border: 1px solid var(--fg);
+    padding: 0.25em 0.5em;
+    line-height: 1;
+    display: inline-block;
+  }
+
+  .monogram--large {
+    font-size: var(--step-3);
+    padding: 0.2em 0.4em;
+  }
+</style>

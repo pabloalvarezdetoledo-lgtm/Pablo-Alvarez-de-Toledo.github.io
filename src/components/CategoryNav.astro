@@ -1,0 +1,60 @@
+---
+import { essayCategorySlugs, essayCategoryPath, type EssayCategoryKey, type Locale } from "@/i18n/config";
+import { categoryThemes } from "@/site.config";
+import { withBase } from "@/lib/url";
+
+export interface Props {
+  locale: Locale;
+  current?: EssayCategoryKey;
+}
+const { locale, current } = Astro.props;
+const categories = Object.keys(essayCategorySlugs) as EssayCategoryKey[];
+---
+
+<nav class="category-nav" aria-label={locale === "en" ? "Essay categories" : "Categorías de ensayos"}>
+  <ul>
+    {
+      categories.map((key) => {
+        const theme = categoryThemes[key];
+        return (
+          <li>
+            <a
+              href={withBase(essayCategoryPath(key, locale))}
+              aria-current={current === key ? "page" : undefined}
+              style={`--accent:${theme.accent}; --accent-soft:${theme.accentSoft};`}
+            >
+              {theme[locale]}
+            </a>
+          </li>
+        );
+      })
+    }
+  </ul>
+</nav>
+
+<style>
+  .category-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+  .category-nav a {
+    display: inline-block;
+    text-decoration: none;
+    font-size: var(--step--1);
+    font-weight: 600;
+    padding: 0.4em 0.9em;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    border-radius: var(--radius);
+    transition: background var(--transition-fast), color var(--transition-fast);
+  }
+  .category-nav a:hover,
+  .category-nav a[aria-current="page"] {
+    background: var(--accent);
+    color: var(--color-ivory);
+  }
+</style>

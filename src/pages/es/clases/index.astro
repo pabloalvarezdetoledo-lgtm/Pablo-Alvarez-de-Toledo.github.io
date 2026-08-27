@@ -1,0 +1,55 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import CourseCard from "@/components/CourseCard.astro";
+import EmptyState from "@/components/EmptyState.astro";
+import { t } from "@/i18n/dictionary";
+import { sectionPath } from "@/i18n/config";
+import { withBase } from "@/lib/url";
+import { byLocale, entrySlug } from "@/lib/content";
+
+const locale = "es" as const;
+const dict = t(locale);
+const entries = byLocale(await getCollection("courses"), locale);
+
+const langTargets = { en: "/en/classes/", es: "/es/clases/" };
+---
+
+<BaseLayout
+  locale={locale}
+  title={dict.section.classes.title}
+  description={dict.section.classes.intro}
+  path="/es/clases/"
+  alternates={{ en: "/en/classes/", es: "/es/clases/" }}
+  langTargets={langTargets}
+  current="classes"
+>
+  <section class="section">
+    <div class="container">
+      <h1>{dict.section.classes.title}</h1>
+      <p class="measure-wide">{dict.section.classes.intro}</p>
+
+      {
+        entries.length === 0 ? (
+          <EmptyState locale={locale} />
+        ) : (
+          <div class="grid grid--3">
+            {entries.map((entry) => (
+              <CourseCard
+                href={withBase(`${sectionPath("classes", locale)}${entrySlug(entry)}/`)}
+                title={entry.data.title}
+                subtitle={entry.data.subtitle}
+                description={entry.data.description}
+                subject={entry.data.subject}
+                difficulty={entry.data.difficulty}
+                estimatedDuration={entry.data.estimatedDuration}
+                status={entry.data.status}
+                locale={locale}
+              />
+            ))}
+          </div>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>

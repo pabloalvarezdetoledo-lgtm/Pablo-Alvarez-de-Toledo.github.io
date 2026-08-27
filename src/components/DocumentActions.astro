@@ -1,0 +1,48 @@
+---
+import { t } from "@/i18n/dictionary";
+import { withBase } from "@/lib/url";
+import type { Locale } from "@/i18n/config";
+
+export interface Props {
+  locale: Locale;
+  pdf?: string;
+  code?: string;
+  data?: string;
+}
+const { locale, pdf, code, data } = Astro.props;
+const dict = t(locale).doc;
+if (!pdf && !code && !data) {
+  // Nothing to render; the parent should not render a wrapper in this case.
+}
+---
+
+{
+  (pdf || code || data) && (
+    <div class="doc-actions" role="group" aria-label="Document actions">
+      {pdf && (
+        <a class="button button--primary" href={withBase(pdf)}>
+          {dict.downloadPdf}
+        </a>
+      )}
+      {code && (
+        <a class="button" href={code} rel="noopener">
+          {dict.viewCode}
+        </a>
+      )}
+      {data && (
+        <a class="button button--ghost" href={data.startsWith("http") ? data : withBase(data)}>
+          {dict.viewData}
+        </a>
+      )}
+    </div>
+  )
+}
+
+<style>
+  .doc-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin: var(--space-6) 0;
+  }
+</style>

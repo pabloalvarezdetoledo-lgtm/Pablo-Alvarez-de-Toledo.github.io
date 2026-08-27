@@ -1,0 +1,136 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import EssayCard from "@/components/EssayCard.astro";
+import CategoryNav from "@/components/CategoryNav.astro";
+import TagFilter from "@/components/TagFilter.astro";
+import EmptyState from "@/components/EmptyState.astro";
+import RelatedContent from "@/components/RelatedContent.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import { t } from "@/i18n/dictionary";
+import { essayCategorySlugs, essayCategoryPath, sectionPath, type EssayCategoryKey } from "@/i18n/config";
+import { essayCategoryIntros } from "@/i18n/essayCategoryIntros";
+import { categoryThemes } from "@/site.config";
+import { withBase } from "@/lib/url";
+import { byLocale, byDateDesc, entrySlug } from "@/lib/content";
+import { resolveResearchRelated, resolvePortfolioRelated } from "@/lib/related";
+
+const locale = "en" as const;
+const dict = t(locale);
+
+export async function getStaticPaths() {
+  const keys = Object.keys(essayCategorySlugs) as EssayCategoryKey[];
+  return keys.map((key) => ({
+    params: { category: essayCategorySlugs[key].en },
+    props: { categoryKey: key },
+  }));
+}
+
+const { categoryKey } = Astro.props;
+const theme = categoryThemes[categoryKey];
+const intro = essayCategoryIntros[categoryKey];
+
+const allEssays = byLocale(await getCollection("essays"), locale);
+const entries = byDateDesc(allEssays.filter((e) => e.data.category === categoryKey));
+const featured = entries.filter((e) => e.data.featured);
+const tags = [...new Set(entries.flatMap((e) => e.data.tags))].sort();
+const languages = [...new Set(entries.map((e) => e.data.documentLanguage))];
+
+const relatedKeys = [...new Set(entries.flatMap((e) => e.data.relatedResearch))];
+const relatedPortfolioKeys = [...new Set(entries.flatMap((e) => e.data.relatedPortfolio))];
+const related = [
+  ...(await resolveResearchRelated(relatedKeys, locale, dict.nav.research)),
+  ...(await resolvePortfolioRelated(relatedPortfolioKeys, locale, dict.nav.portfolio)),
+];
+
+const path = essayCategoryPath(categoryKey, locale);
+const langTargets = { en: path, es: essayCategoryPath(categoryKey, "es") };
+---
+
+<BaseLayout
+  locale={locale}
+  title={`${theme.en} — ${dict.section.essays.title}`}
+  description={intro.en}
+  path={path}
+  alternates={langTargets}
+  langTargets={langTargets}
+  current="essays"
+>
+  <section class="section category-hero" style={`--accent:${theme.accent}; --accent-soft:${theme.accentSoft};`}>
+    <div class="container">
+      <Breadcrumbs items={[{ label: dict.section.essays.title, href: sectionPath("essays", locale) }, { label: theme.en }]} />
+      <p class="eyebrow" style="color:var(--accent)">{dict.section.essays.title}</p>
+      <h1>{theme.en}</h1>
+      <p class="measure-wide">{intro.en}</p>
+      <CategoryNav locale={locale} current={categoryKey} />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      {
+        entries.length === 0 ? (
+          <EmptyState locale={locale} />
+        ) : (
+          <>
+            {featured.length > 0 && (
+              <>
+                <h2>{dict.card.featured}</h2>
+                <div class="grid grid--3">
+                  {featured.map((entry) => (
+                    <EssayCard
+                      href={withBase(path + entrySlug(entry) + "/")}
+                      title={entry.data.title}
+                      subtitle={entry.data.subtitle}
+                      description={entry.data.description}
+                      date={entry.data.date}
+                      category={entry.data.category}
+                      status={entry.data.status}
+                      featured={entry.data.featured}
+                      tags={entry.data.tags}
+                      locale={locale}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+
+            <h2>{dict.section.essays.archive}</h2>
+            <TagFilter locale={locale} tags={tags} languages={languages} targetListId="category-list" />
+            <div id="category-list" class="grid grid--3">
+              {entries.map((entry) => (
+                <div data-tags={entry.data.tags.join("|")} data-language={entry.data.documentLanguage}>
+                  <EssayCard
+                    href={withBase(path + entrySlug(entry) + "/")}
+                    title={entry.data.title}
+                    subtitle={entry.data.subtitle}
+                    description={entry.data.description}
+                    date={entry.data.date}
+                    category={entry.data.category}
+                    status={entry.data.status}
+                    featured={entry.data.featured}
+                    tags={entry.data.tags}
+                    locale={locale}
+                  />
+                </div>
+              ))}
+            </div>
+          </>
+        )
+      }
+
+      <RelatedContent locale={locale} items={related} />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .category-hero {
+    border-bottom: 3px solid var(--accent);
+    background: var(--accent-soft);
+    padding-block: var(--space-7);
+  }
+  .category-hero .eyebrow {
+    font-weight: 700;
+  }
+</style>

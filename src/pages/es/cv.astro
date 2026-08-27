@@ -1,0 +1,83 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { t } from "@/i18n/dictionary";
+import { withBase } from "@/lib/url";
+import { publicFileExists } from "@/lib/publicFile";
+import { bio, person } from "@/site.config";
+
+const locale = "es" as const;
+const dict = t(locale);
+const langTargets = { en: "/en/cv/", es: "/es/cv/" };
+const cvAvailable = publicFileExists(person.cvPath);
+---
+
+<BaseLayout
+  locale={locale}
+  title={dict.cv.title}
+  description="Curriculum vitae de Pablo Álvarez de Toledo — economía, finanzas internacionales e investigación aplicada."
+  path="/es/cv/"
+  alternates={{ en: "/en/cv/", es: "/es/cv/" }}
+  langTargets={langTargets}
+  current="about"
+>
+  <section class="section">
+    <div class="container measure-wide">
+      <h1>{dict.cv.title}</h1>
+      <p class="pending-note">{dict.cv.note}</p>
+
+      {
+        cvAvailable ? (
+          <a class="button button--primary" href={withBase(person.cvPath)}>
+            {dict.cv.download}
+          </a>
+        ) : (
+          <p class="cv-unavailable">TODO(pablo): todavía no se ha subido ningún archivo de CV — consulta el README.md “Cómo actualizar el CV.”</p>
+        )
+      }
+
+      <h2>Formación</h2>
+      <ul class="timeline">
+        {bio.es.education.map((item) => (
+          <li>
+            <h3>{item.title}</h3>
+            <p>{item.detail}</p>
+          </li>
+        ))}
+      </ul>
+
+      <h2>Experiencia</h2>
+      <ul class="timeline">
+        {bio.es.experience.map((item) => (
+          <li>
+            <h3>{item.title}</h3>
+            <p>{item.detail}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .pending-note {
+    color: var(--fg-muted);
+    font-size: var(--step--1);
+  }
+  .cv-unavailable {
+    border: 1px dashed var(--rule-strong);
+    padding: var(--space-4);
+    color: var(--fg-muted);
+    font-size: var(--step--1);
+  }
+  .timeline {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-4) 0 var(--space-7);
+    display: grid;
+    gap: var(--space-5);
+  }
+  .timeline li {
+    border-left: 2px solid var(--accent);
+    padding-left: var(--space-4);
+  }
+</style>

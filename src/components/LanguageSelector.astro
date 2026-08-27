@@ -1,0 +1,64 @@
+---
+import { locales, localeNames, type Locale } from "@/i18n/config";
+import { withBase } from "@/lib/url";
+
+export interface Props {
+  locale: Locale;
+  /** Path (without locale prefix logic applied) to link to for each locale, e.g. { en: "/en/research/", es: "/es/investigacion/" } */
+  targets: Record<Locale, string>;
+}
+
+const { locale, targets } = Astro.props;
+---
+
+<nav class="lang-selector" aria-label="Language selector">
+  <ul>
+    {
+      locales.map((code) => (
+        <li>
+          <a
+            href={withBase(targets[code])}
+            aria-current={code === locale ? "page" : undefined}
+            lang={code}
+          >
+            <span aria-hidden="true">{code.toUpperCase()}</span>
+            <span class="visually-hidden">{localeNames[code]}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style>
+  .lang-selector ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: var(--space-2);
+    border: 1px solid var(--rule-strong);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .lang-selector a {
+    display: block;
+    padding: 0.4em 0.7em;
+    text-decoration: none;
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--fg-muted);
+    transition: background var(--transition-fast), color var(--transition-fast);
+  }
+
+  .lang-selector a:hover {
+    color: var(--fg);
+  }
+
+  .lang-selector a[aria-current="page"] {
+    background: var(--fg);
+    color: var(--bg);
+  }
+</style>

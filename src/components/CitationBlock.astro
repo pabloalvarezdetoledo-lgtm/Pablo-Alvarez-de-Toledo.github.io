@@ -1,0 +1,66 @@
+---
+import { t } from "@/i18n/dictionary";
+import type { Locale } from "@/i18n/config";
+
+export interface Props {
+  locale: Locale;
+  citation: string;
+}
+const { locale, citation } = Astro.props;
+const dict = t(locale).doc;
+---
+
+<section class="citation" aria-label={dict.citeThis}>
+  <h2 class="citation__heading">{dict.citeThis}</h2>
+  <pre class="citation__text">{citation}</pre>
+  <button
+    type="button"
+    class="button button--ghost citation__copy"
+    data-citation={citation}
+    data-copied-label={dict.copied}
+  >
+    {dict.copyCitation}
+  </button>
+</section>
+
+<style>
+  .citation {
+    border: var(--border-thin);
+    padding: var(--space-5);
+    margin: var(--space-7) 0;
+    background: var(--bg-raised);
+  }
+  .citation__heading {
+    font-size: var(--step-0);
+    margin-bottom: var(--space-3);
+  }
+  .citation__text {
+    white-space: pre-wrap;
+    font-family: var(--font-body);
+    font-size: var(--step--1);
+    color: var(--fg-muted);
+    margin: 0 0 var(--space-4);
+  }
+</style>
+
+<script>
+  function initCitationCopy() {
+    document.querySelectorAll<HTMLButtonElement>(".citation__copy").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const text = button.dataset.citation ?? "";
+        try {
+          await navigator.clipboard.writeText(text);
+          const original = button.textContent;
+          button.textContent = button.dataset.copiedLabel || "Copied";
+          window.setTimeout(() => {
+            button.textContent = original;
+          }, 1800);
+        } catch {
+          // Clipboard API unavailable; the citation text remains visible for manual copy.
+        }
+      });
+    });
+  }
+  initCitationCopy();
+  document.addEventListener("astro:page-load", initCitationCopy);
+</script>

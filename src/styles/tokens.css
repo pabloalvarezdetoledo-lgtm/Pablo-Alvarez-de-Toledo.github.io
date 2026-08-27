@@ -1,0 +1,66 @@
+:root {
+  /* Core palette */
+  --color-ivory: #f5f1e8;
+  --color-ivory-raised: #efe9db;
+  --color-navy: #142033;
+  --color-navy-soft: #2a3b54;
+  --color-graphite: #454b57;
+  --color-graphite-light: #6b7280;
+  --color-burgundy: #722f37;
+  --color-burgundy-dark: #591f26;
+  --color-rule: #d9d2c0;
+  --color-rule-strong: #b9ae94;
+  --color-surface: #ffffff;
+  --color-focus: #142033;
+
+  /* Semantic aliases */
+  --bg: var(--color-ivory);
+  --bg-raised: var(--color-ivory-raised);
+  --fg: var(--color-navy);
+  --fg-muted: var(--color-graphite);
+  --accent: var(--color-burgundy);
+  --accent-dark: var(--color-burgundy-dark);
+  --rule: var(--color-rule);
+  --rule-strong: var(--color-rule-strong);
+
+  /* Typography */
+  --font-display: "Newsreader", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --font-body: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+
+  --step--1: clamp(0.83rem, 0.8rem + 0.15vw, 0.9rem);
+  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  --step-1: clamp(1.2rem, 1.13rem + 0.35vw, 1.4rem);
+  --step-2: clamp(1.44rem, 1.32rem + 0.6vw, 1.8rem);
+  --step-3: clamp(1.8rem, 1.6rem + 1vw, 2.4rem);
+  --step-4: clamp(2.2rem, 1.9rem + 1.6vw, 3.2rem);
+  --step-5: clamp(2.75rem, 2.2rem + 2.6vw, 4.2rem);
+
+  /* Spacing scale */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4.5rem;
+  --space-9: 6.5rem;
+
+  /* Layout */
+  --content-width: 72rem;
+  --measure: 38rem;
+  --measure-wide: 46rem;
+  --radius: 2px;
+  --border-thin: 1px solid var(--rule);
+  --border-strong: 1px solid var(--color-rule-strong);
+
+  --transition-fast: 120ms ease;
+  --transition-base: 200ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-fast: 0ms;
+    --transition-base: 0ms;
+  }
+}

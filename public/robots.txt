@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://pabloalvarezdetoledo-lgtm.github.io/Pablo-Alvarez-de-Toledo.github.io/sitemap-index.xml

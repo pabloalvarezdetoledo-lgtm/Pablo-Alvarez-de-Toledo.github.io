@@ -1,0 +1,234 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PublicationCard from "@/components/PublicationCard.astro";
+import ProjectCard from "@/components/ProjectCard.astro";
+import EssayCard from "@/components/EssayCard.astro";
+import CourseCard from "@/components/CourseCard.astro";
+import Monogram from "@/components/Monogram.astro";
+import { t } from "@/i18n/dictionary";
+import { sectionPath, essayCategoryPath, type EssayCategoryKey } from "@/i18n/config";
+import { withBase } from "@/lib/url";
+import { byLocale, byDateDesc, entrySlug } from "@/lib/content";
+import { heroCopy, person } from "@/site.config";
+import { personSchema } from "@/lib/structuredData";
+
+const locale = "en" as const;
+const dict = t(locale);
+
+const research = byDateDesc(byLocale(await getCollection("research"), locale));
+const featuredResearch = research.filter((e) => e.data.featured).slice(0, 2);
+
+const portfolio = byDateDesc(byLocale(await getCollection("portfolio"), locale));
+const featuredPortfolio = portfolio.filter((e) => e.data.featured).slice(0, 3);
+
+const essays = byDateDesc(byLocale(await getCollection("essays"), locale));
+const latestEssay = essays[0];
+
+const courses = byLocale(await getCollection("courses"), locale);
+const latestCourse = courses[0];
+
+const langTargets = {
+  en: "/en/",
+  es: "/es/",
+};
+
+const structuredData = personSchema(Astro.site);
+---
+
+<BaseLayout
+  locale={locale}
+  title={person.name}
+  description={heroCopy.en.statement}
+  path="/en/"
+  alternates={{ en: "/en/", es: "/es/" }}
+  langTargets={langTargets}
+  seoType="profile"
+  structuredData={structuredData}
+>
+  <section class="hero section">
+    <div class="container hero__grid">
+      <div>
+        <p class="eyebrow">{person.name}</p>
+        <h1>{heroCopy.en.headline}</h1>
+        <p class="hero__statement measure">{heroCopy.en.statement}</p>
+        <div class="hero__actions">
+          <a class="button button--primary" href={withBase(sectionPath("cv", locale))}>{dict.home.heroCvLabel}</a>
+          <a class="button" href={withBase(sectionPath("contact", locale))}>{dict.home.heroContactLabel}</a>
+        </div>
+      </div>
+      <div class="hero__portrait" aria-hidden="true">
+        <Monogram size="large" />
+        <p class="hero__portrait-note">
+          TODO(pablo): replace this placeholder with an editorial portrait. See README.md “How to replace the
+          homepage portrait.”
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-heading">
+        <h2>{dict.home.featuredResearch}</h2>
+        <a href={withBase(sectionPath("research", locale))}>{dict.home.viewAll} →</a>
+      </div>
+      {
+        featuredResearch.length > 0 ? (
+          <div class="grid grid--2">
+            {featuredResearch.map((entry) => (
+              <PublicationCard
+                href={withBase(`${sectionPath("research", locale)}${entrySlug(entry)}/`)}
+                title={entry.data.title}
+                subtitle={entry.data.subtitle}
+                description={entry.data.description}
+                date={entry.data.date}
+                category={entry.data.category}
+                status={entry.data.status}
+                featured={entry.data.featured}
+                tags={entry.data.tags}
+                locale={locale}
+              />
+            ))}
+          </div>
+        ) : (
+          <p>{dict.empty.noEntries}</p>
+        )
+      }
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <div class="section-heading">
+        <h2>{dict.home.selectedProjects}</h2>
+        <a href={withBase(sectionPath("portfolio", locale))}>{dict.home.viewAll} →</a>
+      </div>
+      {
+        featuredPortfolio.length > 0 ? (
+          <div class="grid grid--3">
+            {featuredPortfolio.map((entry) => (
+              <ProjectCard
+                href={withBase(`${sectionPath("portfolio", locale)}${entrySlug(entry)}/`)}
+                title={entry.data.title}
+                subtitle={entry.data.subtitle}
+                description={entry.data.description}
+                date={entry.data.date}
+                status={entry.data.status}
+                featured={entry.data.featured}
+                skills={entry.data.skills}
+                locale={locale}
+              />
+            ))}
+          </div>
+        ) : (
+          <p>{dict.empty.noEntries}</p>
+        )
+      }
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <h2>{dict.home.latest}</h2>
+      <div class="grid grid--2">
+        {latestEssay && (
+          <EssayCard
+            href={withBase(essayCategoryPath(latestEssay.data.category as EssayCategoryKey, locale) + entrySlug(latestEssay) + "/")}
+            title={latestEssay.data.title}
+            subtitle={latestEssay.data.subtitle}
+            description={latestEssay.data.description}
+            date={latestEssay.data.date}
+            category={latestEssay.data.category}
+            status={latestEssay.data.status}
+            featured={latestEssay.data.featured}
+            tags={latestEssay.data.tags}
+            locale={locale}
+          />
+        )}
+        {latestCourse && (
+          <CourseCard
+            href={withBase(`${sectionPath("classes", locale)}${entrySlug(latestCourse)}/`)}
+            title={latestCourse.data.title}
+            subtitle={latestCourse.data.subtitle}
+            description={latestCourse.data.description}
+            subject={latestCourse.data.subject}
+            difficulty={latestCourse.data.difficulty}
+            estimatedDuration={latestCourse.data.estimatedDuration}
+            status={latestCourse.data.status}
+            locale={locale}
+          />
+        )}
+      </div>
+    </div>
+  </section>
+
+  <section class="section connection">
+    <div class="container">
+      <h2>{dict.home.connectionTitle}</h2>
+      <p class="measure-wide">{dict.home.connectionBody}</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: var(--space-8);
+    align-items: center;
+  }
+  .hero__statement {
+    font-size: var(--step-1);
+    color: var(--fg-muted);
+  }
+  .hero__actions {
+    display: flex;
+    gap: var(--space-4);
+    margin-top: var(--space-6);
+    flex-wrap: wrap;
+  }
+  .hero__portrait {
+    border: 1px dashed var(--rule-strong);
+    aspect-ratio: 4 / 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    text-align: center;
+  }
+  .hero__portrait-note {
+    font-size: var(--step--1);
+    color: var(--fg-muted);
+    margin: 0;
+  }
+  .section-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: var(--space-6);
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+  .section-heading a {
+    text-decoration: none;
+    font-size: var(--step--1);
+    font-weight: 600;
+  }
+  .connection {
+    background: var(--bg-raised);
+    border-top: var(--border-thin);
+    border-bottom: var(--border-thin);
+  }
+
+  @media (max-width: 780px) {
+    .hero__grid {
+      grid-template-columns: 1fr;
+    }
+    .hero__portrait {
+      order: -1;
+    }
+  }
+</style>

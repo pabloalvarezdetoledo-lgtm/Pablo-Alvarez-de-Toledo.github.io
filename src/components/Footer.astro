@@ -1,0 +1,97 @@
+---
+import Monogram from "./Monogram.astro";
+import { t } from "@/i18n/dictionary";
+import { sectionPath, type Locale } from "@/i18n/config";
+import { withBase } from "@/lib/url";
+import { person } from "@/site.config";
+
+export interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const nav = t(locale).nav;
+const footer = t(locale).footer;
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container site-footer__grid">
+    <div>
+      <Monogram />
+      <p class="site-footer__name">{person.name}</p>
+    </div>
+
+    <nav aria-label="Footer">
+      <ul>
+        <li><a href={withBase(sectionPath("research", locale))}>{nav.research}</a></li>
+        <li><a href={withBase(sectionPath("portfolio", locale))}>{nav.portfolio}</a></li>
+        <li><a href={withBase(sectionPath("essays", locale))}>{nav.essays}</a></li>
+        <li><a href={withBase(sectionPath("classes", locale))}>{nav.classes}</a></li>
+        <li><a href={withBase(sectionPath("about", locale))}>{nav.about}</a></li>
+      </ul>
+    </nav>
+
+    <div>
+      <p class="eyebrow">{nav.contact}</p>
+      <ul class="site-footer__contact">
+        <li><a href={`mailto:${person.email}`}>{person.email}</a></li>
+        <li><a href={person.linkedin}>LinkedIn</a></li>
+        <li><a href={person.github}>GitHub</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container site-footer__bottom">
+    <p>&copy; {year} {person.name}. {footer.rights}</p>
+    <p>{footer.builtWith}</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: var(--border-thin);
+    margin-top: var(--space-9);
+    padding-block: var(--space-7);
+    color: var(--fg-muted);
+    font-size: var(--step--1);
+  }
+
+  .site-footer__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    gap: var(--space-6);
+    margin-bottom: var(--space-6);
+  }
+
+  .site-footer__name {
+    margin-top: var(--space-3);
+    font-family: var(--font-display);
+    color: var(--fg);
+  }
+
+  .site-footer ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .site-footer a {
+    text-decoration: none;
+    color: var(--fg-muted);
+  }
+
+  .site-footer a:hover {
+    color: var(--fg);
+  }
+
+  .site-footer__bottom {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    padding-top: var(--space-5);
+    border-top: var(--border-thin);
+  }
+</style>

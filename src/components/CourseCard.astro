@@ -1,0 +1,52 @@
+---
+import EntryCover from "./EntryCover.astro";
+import { t } from "@/i18n/dictionary";
+import type { Locale } from "@/i18n/config";
+
+export interface Props {
+  href: string;
+  title: string;
+  subtitle?: string;
+  description: string;
+  subject: string;
+  difficulty: "introductory" | "intermediate" | "advanced";
+  estimatedDuration: string;
+  status: "planned" | "in-production" | "published";
+  locale: Locale;
+  cover?: ImageMetadata;
+  coverAlt?: string;
+}
+
+const { href, title, subtitle, description, subject, difficulty, estimatedDuration, status, locale, cover, coverAlt } =
+  Astro.props;
+const dict = t(locale);
+const difficultyLabel: Record<string, { en: string; es: string }> = {
+  introductory: { en: "Introductory", es: "Introductorio" },
+  intermediate: { en: "Intermediate", es: "Intermedio" },
+  advanced: { en: "Advanced", es: "Avanzado" },
+};
+const statusLabel: Record<string, { en: string; es: string }> = {
+  planned: { en: "Planned", es: "Planificado" },
+  "in-production": { en: "In production", es: "En producción" },
+  published: { en: "Published", es: "Publicado" },
+};
+---
+
+<article class="card">
+  <div class="card__cover">
+    <EntryCover title={title} locale={locale} cover={cover} coverAlt={coverAlt} />
+  </div>
+  <div class="card__body">
+    <div class="card__meta">
+      <span>{subject}</span>
+      <span aria-hidden="true">·</span>
+      <span>{difficultyLabel[difficulty][locale]}</span>
+      <span aria-hidden="true">·</span>
+      <span>{statusLabel[status][locale]}</span>
+    </div>
+    <h3 class="card__title"><a href={href}>{title}</a></h3>
+    {subtitle && <p class="card__subtitle">{subtitle}</p>}
+    <p class="card__description">{description}</p>
+    <p class="card__meta">{dict.course.duration}: {estimatedDuration}</p>
+  </div>
+</article>
