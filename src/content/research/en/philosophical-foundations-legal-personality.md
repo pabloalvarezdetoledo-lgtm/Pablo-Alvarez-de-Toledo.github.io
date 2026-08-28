@@ -20,6 +20,8 @@ citation: "Álvarez de Toledo Rodríguez, P. (2026). Persona, dignidad y subjeti
 relatedResearch: ["eurosystem-liquidity"]
 relatedPortfolio: []
 relatedEssays: []
+cover: ./cover-legal-personality.svg
+coverAlt: "Illustration of a sealed scroll of parchment crossed by a quill."
 ---
 
 ## About this entry

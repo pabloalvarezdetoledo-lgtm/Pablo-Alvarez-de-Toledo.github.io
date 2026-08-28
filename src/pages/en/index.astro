@@ -88,6 +88,8 @@ const structuredData = personSchema(Astro.site);
                 featured={entry.data.featured}
                 tags={entry.data.tags}
                 locale={locale}
+                cover={entry.data.cover}
+                coverAlt={entry.data.coverAlt}
               />
             ))}
           </div>

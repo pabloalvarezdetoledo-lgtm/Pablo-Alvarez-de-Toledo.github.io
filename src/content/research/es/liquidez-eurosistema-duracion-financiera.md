@@ -20,6 +20,8 @@ citation: "Álvarez de Toledo, P. (2026). Liquidez del Eurosistema, Duración Fi
 relatedResearch: ["legal-personality"]
 relatedPortfolio: ["bbva-equity-research"]
 relatedEssays: []
+cover: ./cover-liquidez-eurosistema.svg
+coverAlt: "Ilustración de una curva de tipos que se eleva sobre la fachada clásica de un banco central."
 ---
 
 ## Sobre esta entrada

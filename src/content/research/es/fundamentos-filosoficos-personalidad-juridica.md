@@ -20,6 +20,8 @@ citation: "Álvarez de Toledo Rodríguez, P. (2026). Persona, dignidad y subjeti
 relatedResearch: ["eurosystem-liquidity"]
 relatedPortfolio: []
 relatedEssays: []
+cover: ./cover-personalidad-juridica.svg
+coverAlt: "Ilustración de un pergamino sellado con lacre, cruzado por una pluma."
 ---
 
 ## Sobre esta entrada

@@ -20,6 +20,8 @@ citation: "Álvarez de Toledo, P. (2026). Eurosystem Liquidity, Financial Durati
 relatedResearch: ["legal-personality"]
 relatedPortfolio: ["bbva-equity-research"]
 relatedEssays: []
+cover: ./cover-eurosystem-liquidity.svg
+coverAlt: "Illustration of a yield curve arcing above a classical central-bank facade with columns."
 ---
 
 ## About this entry
