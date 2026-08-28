@@ -121,6 +121,7 @@ const essays = defineCollection({
         documentLanguage: locale,
         status: z.enum(["draft", "published"]).default("draft"),
         featured: z.boolean().default(false),
+        pdf: z.string().optional(),
         citation: z.string().optional(),
         relatedResearch: z.array(z.string()).default([]),
         relatedPortfolio: z.array(z.string()).default([]),

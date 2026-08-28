@@ -3,6 +3,7 @@ import { getCollection, render } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import EntryCover from "@/components/EntryCover.astro";
+import DocumentActions from "@/components/DocumentActions.astro";
 import CitationBlock from "@/components/CitationBlock.astro";
 import RelatedContent from "@/components/RelatedContent.astro";
 import { t } from "@/i18n/dictionary";
@@ -103,6 +104,8 @@ const structuredData = [
         focalPoint={entry.data.focalPoint}
         loading="eager"
       />
+
+      <DocumentActions locale={locale} pdf={entry.data.pdf} />
 
       <div class="entry__body">
         <Content />
