@@ -1,12 +1,15 @@
 ---
 import ResponsiveImage from "./ResponsiveImage.astro";
 import TypographicCover from "./TypographicCover.astro";
+import PortfolioCover from "./PortfolioCover.astro";
 import type { CategoryKey } from "@/site.config";
 import type { Locale } from "@/i18n/config";
 
 export interface Props {
   title: string;
   category?: CategoryKey;
+  /** Portfolio entries have no `category`; pass their `tags` instead to get a sector-themed cover. */
+  tags?: string[];
   locale: Locale;
   cover?: ImageMetadata;
   coverAlt?: string;
@@ -16,7 +19,7 @@ export interface Props {
   loading?: "lazy" | "eager";
 }
 
-const { title, category, locale, cover, coverAlt, coverCaption, coverCredit, focalPoint, loading = "lazy" } =
+const { title, category, tags, locale, cover, coverAlt, coverCaption, coverCredit, focalPoint, loading = "lazy" } =
   Astro.props;
 ---
 
@@ -31,8 +34,12 @@ const { title, category, locale, cover, coverAlt, coverCaption, coverCredit, foc
         </figcaption>
       )}
     </figure>
-  ) : (
+  ) : category ? (
     <TypographicCover title={title} category={category} locale={locale} />
+  ) : tags ? (
+    <PortfolioCover title={title} tags={tags} locale={locale} />
+  ) : (
+    <TypographicCover title={title} locale={locale} />
   )
 }
 

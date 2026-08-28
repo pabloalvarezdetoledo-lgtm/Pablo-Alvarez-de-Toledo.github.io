@@ -15,6 +15,8 @@ pdf: "/files/essays/el-derecho-a-equivocarse.pdf"
 citation: "Álvarez de Toledo Rodríguez, P. (2026). La libertad de equivocarse: censura, verdad y domesticación del juicio."
 relatedResearch: ["legal-personality"]
 relatedPortfolio: []
+cover: ./cover-el-derecho-a-equivocarse.svg
+coverAlt: "Illustration of an open book: the left page shown with censored, redacted lines, the right page with free-flowing lines, a quill crossing both."
 ---
 
 **Note:** this essay was written and published in Spanish and has not yet been translated into English. The original text is reproduced in full below, and the PDF is available to download above, so that it remains accessible from this section of the site regardless of which language you are reading in.

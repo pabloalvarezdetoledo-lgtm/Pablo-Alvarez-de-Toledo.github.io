@@ -89,6 +89,8 @@ const langTargets = { en: path, es: essayCategoryPath(categoryKey, "es") };
                       featured={entry.data.featured}
                       tags={entry.data.tags}
                       locale={locale}
+                      cover={entry.data.cover}
+                      coverAlt={entry.data.coverAlt}
                     />
                   ))}
                 </div>
@@ -111,6 +113,8 @@ const langTargets = { en: path, es: essayCategoryPath(categoryKey, "es") };
                     featured={entry.data.featured}
                     tags={entry.data.tags}
                     locale={locale}
+                    cover={entry.data.cover}
+                    coverAlt={entry.data.coverAlt}
                   />
                 </div>
               ))}

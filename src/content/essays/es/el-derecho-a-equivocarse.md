@@ -15,6 +15,8 @@ pdf: "/files/essays/el-derecho-a-equivocarse.pdf"
 citation: "Álvarez de Toledo Rodríguez, P. (2026). La libertad de equivocarse: censura, verdad y domesticación del juicio."
 relatedResearch: ["legal-personality"]
 relatedPortfolio: []
+cover: ./cover-el-derecho-a-equivocarse.svg
+coverAlt: "Ilustración de un libro abierto: la página izquierda con líneas censuradas, la derecha con líneas libres, y una pluma cruzando ambas."
 ---
 
 En una época dominada por la confusión, por la velocidad y alcance de los mensajes y por la facilidad con la que la mentira puede vestirse de verdad, resulta tentador pedir un árbitro supremo que distinga por nosotros lo verdadero de lo falso. La tentación es comprensible, pero profundamente peligrosa. Allí donde el individuo renuncia al deber de juzgar, comienza a acostumbrarse a la comodidad de obedecer. Y ese es, quizá, el riesgo más grave. No que exista el error, sino que desaparezca la conciencia de nuestra responsabilidad frente a él. El escepticismo no es una desgracia de la vida en común, sino una de sus condiciones más nobles. No toda información debe ser creída, como no toda voz merece asentimiento; pero precisamente por eso el ser humano está llamado a discernir, no a delegar ciegamente ese discernimiento en una instancia superior.

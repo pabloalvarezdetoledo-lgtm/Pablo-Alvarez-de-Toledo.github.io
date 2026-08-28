@@ -1,0 +1,150 @@
+---
+import { sectorForTags, sectorLabel, sectorThemes, sparklinePoints, type SectorKey } from "@/lib/portfolioCover";
+import type { Locale } from "@/i18n/config";
+
+export interface Props {
+  title: string;
+  tags: string[];
+  locale: Locale;
+}
+
+const { title, tags, locale } = Astro.props;
+const sector = sectorForTags(tags);
+const theme = sectorThemes[sector];
+
+const W = 400;
+const H = 300;
+const points = sparklinePoints(title, W, H);
+const areaPoints = `0,${H} ${points} ${W},${H}`;
+
+const icons: Record<SectorKey, string> = {
+  banking:
+    '<path d="M3 9.5 10 4l7 5.5" /><path d="M4.5 9.5V16M8 9.5V16M12 9.5V16M15.5 9.5V16" /><path d="M3 16h14" />',
+  energy: '<circle cx="10" cy="10" r="4" /><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.5 4.5l1.4 1.4M14.1 14.1l1.4 1.4M4.5 15.5l1.4-1.4M14.1 5.9l1.4-1.4" />',
+  "aerospace-defense": '<path d="M10 2 3 15h5l2 3 2-3h5z" /><path d="M10 2v13" />',
+  consumer: '<path d="M5 8h10l-1 8a2 2 0 0 1-2 1.8H8A2 2 0 0 1 6 16z" /><path d="M7 8a3 3 0 0 1 6 0" />',
+  technology: '<rect x="6" y="6" width="8" height="8" rx="1" /><path d="M9 3v3M11 3v3M9 14v3M11 14v3M3 9h3M3 11h3M14 9h3M14 11h3" />',
+  general: '<path d="M3 15 8 9l3 3 6-7" /><path d="M13 5h4v4" />',
+};
+---
+
+<div class="pcover" style={`--cover-accent:${theme.accent}; --cover-soft:${theme.accentSoft};`}>
+  <svg class="pcover__chart" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden="true">
+    <polygon points={areaPoints} class="pcover__area" />
+    <polyline points={points} class="pcover__line" />
+  </svg>
+
+  <div class="pcover__top">
+    <span class="pcover__monogram" aria-hidden="true">PAT</span>
+    <span class="pcover__sector">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" set:html={icons[sector]} />
+      {sectorLabel(sector, locale)}
+    </span>
+  </div>
+
+  <div class="pcover__bottom">
+    <span class="pcover__rule" aria-hidden="true"></span>
+    <span class="pcover__title">{title}</span>
+  </div>
+</div>
+
+<style>
+  .pcover {
+    aspect-ratio: 4 / 3;
+    background: var(--cover-soft);
+    border: 1px solid var(--cover-accent);
+    color: var(--color-navy);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .pcover__chart {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .pcover__area {
+    fill: var(--cover-accent);
+    opacity: 0.1;
+  }
+
+  .pcover__line {
+    fill: none;
+    stroke: var(--cover-accent);
+    stroke-width: 2.5;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    opacity: 0.55;
+  }
+
+  .pcover__top,
+  .pcover__bottom {
+    position: relative;
+    z-index: 1;
+    padding: var(--space-5);
+  }
+
+  .pcover__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .pcover__monogram {
+    font-family: var(--font-display);
+    font-size: var(--step--1);
+    letter-spacing: 0.18em;
+    color: var(--cover-accent);
+  }
+
+  .pcover__sector {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    font-size: var(--step--2);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    color: var(--cover-accent);
+    background: color-mix(in srgb, var(--cover-soft) 55%, white);
+    border: 1px solid var(--cover-accent);
+    border-radius: 999px;
+    padding: 0.3em 0.65em 0.3em 0.5em;
+    white-space: nowrap;
+  }
+
+  .pcover__sector svg {
+    width: 1.1em;
+    height: 1.1em;
+    flex-shrink: 0;
+  }
+
+  .pcover__bottom {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .pcover__rule {
+    display: block;
+    height: 3px;
+    width: 2.5rem;
+    background: var(--cover-accent);
+  }
+
+  .pcover__title {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    line-height: 1.2;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>
