@@ -21,15 +21,15 @@ export const person = {
  */
 export const heroCopy = {
   en: {
-    headline: "Economics, International Finance and Applied Research",
+    headline: "Finance, Economics and Philosophy",
     statement:
-      "I study how monetary institutions, financial markets and corporate decisions shape asset valuation, combining economic theory, financial analysis and quantitative methods.",
+      "I work on how monetary institutions, financial markets and corporate decisions shape asset valuation, and I am writing a book that sets out a system of thought on the person, knowledge and the limits of political power.",
     isDraft: true,
   },
   es: {
-    headline: "Economía, Finanzas Internacionales e Investigación Aplicada",
+    headline: "Finanzas, Economía y Filosofía",
     statement:
-      "Estudio cómo las instituciones monetarias, los mercados financieros y las decisiones corporativas determinan la valoración de activos, combinando teoría económica, análisis financiero y métodos cuantitativos.",
+      "Trabajo sobre cómo las instituciones monetarias, los mercados financieros y las decisiones corporativas determinan la valoración de activos, y escribo un libro que formaliza un sistema de pensamiento sobre la persona, el conocimiento y los límites del poder político.",
     isDraft: true,
   },
 };

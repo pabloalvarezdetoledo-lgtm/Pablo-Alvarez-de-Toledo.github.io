@@ -3,6 +3,7 @@ import type { Locale } from "./config";
 export const dictionary = {
   en: {
     nav: {
+      book: "Book",
       research: "Research",
       portfolio: "Portfolio",
       essays: "Essays",
@@ -24,10 +25,10 @@ export const dictionary = {
       heroContactLabel: "Get in touch",
       featuredResearch: "Featured Research",
       selectedProjects: "Selected Projects",
-      latest: "Latest Essay & Class",
-      connectionTitle: "Economics, finance and quantitative research",
+      latest: "Essays & Classes",
+      connectionTitle: "Two lines of work",
       connectionBody:
-        "The work on this site follows a single line of inquiry: how monetary institutions and financial markets set the terms on which capital is priced, and how that pricing works its way into corporate decisions and portfolio construction. Research establishes the theory and evidence, the portfolio applies it to concrete valuation problems, and the essays and classes set out the reasoning in full.",
+        "One line is professional and quantitative: how monetary institutions and financial markets set the terms on which capital is priced, and how that pricing reaches corporate decisions and portfolios. The research, the portfolio and the classes belong to it. The other is philosophical: a book on the person, knowledge, rationality and the limits of power. They are less separate than they look, because both start from the same question: how people act when nobody knows everything they would need to know.",
       viewAll: "View all",
       readAbstract: "Read abstract",
       viewCaseStudy: "View case study",
@@ -46,7 +47,7 @@ export const dictionary = {
       essays: {
         title: "Essays",
         intro:
-          "Longer-form writing organised by theme, from applied economics to political economy and philosophy.",
+          "Shorter pieces and coursework essays on applied economics, finance and political economy. Most of my philosophical essays now live in the book.",
         archive: "Archive",
       },
       classes: {
@@ -54,6 +55,24 @@ export const dictionary = {
         intro:
           "Structured courses in economics, finance and econometrics, built around recorded lessons, written notes and exercises.",
       },
+    },
+    book: {
+      eyebrow: "Book in progress",
+      readOnline: "Read online",
+      readChapter: "Read chapter",
+      downloadFull: "Download full book (PDF)",
+      downloadChapter: "Download chapter (PDF)",
+      contents: "Contents",
+      part: "Part",
+      chapter: "Chapter",
+      inThisChapter: "In this chapter",
+      previous: "Previous chapter",
+      next: "Next chapter",
+      backToContents: "Back to contents",
+      spanishOnly: "In Spanish",
+      chaptersCount: "chapters",
+      homeTitle: "The book",
+      homeBody: "Most of my essays have become chapters of a single book that attempts to set out a system of thought, from ontology and the theory of knowledge to economics, law and the limits of political power.",
     },
     card: {
       featured: "Featured",
@@ -141,6 +160,7 @@ export const dictionary = {
   },
   es: {
     nav: {
+      book: "Libro",
       research: "Investigación",
       portfolio: "Portfolio",
       essays: "Ensayos",
@@ -162,10 +182,10 @@ export const dictionary = {
       heroContactLabel: "Contactar",
       featuredResearch: "Investigación Destacada",
       selectedProjects: "Proyectos Seleccionados",
-      latest: "Último Ensayo y Clase",
-      connectionTitle: "Economía, finanzas e investigación cuantitativa",
+      latest: "Ensayos y clases",
+      connectionTitle: "Dos líneas de trabajo",
       connectionBody:
-        "El trabajo de este sitio sigue una única línea de investigación: cómo las instituciones monetarias y los mercados financieros determinan las condiciones en que se valora el capital, y cómo esa valoración se traslada a las decisiones corporativas y a la construcción de carteras. La investigación establece la teoría y la evidencia, el portfolio la aplica a problemas concretos de valoración, y los ensayos y clases exponen el razonamiento completo.",
+        "Una línea es profesional y cuantitativa: cómo las instituciones monetarias y los mercados financieros fijan las condiciones en que se valora el capital, y cómo esa valoración llega a las decisiones de empresas y carteras. A ella pertenecen la investigación, el portfolio y las clases. La otra es filosófica: un libro sobre la persona, el conocimiento, la racionalidad y los límites del poder. Están menos separadas de lo que parece, porque ambas parten de la misma pregunta: cómo actúan las personas cuando nadie sabe todo lo que necesitaría saber.",
       viewAll: "Ver todo",
       readAbstract: "Leer resumen",
       viewCaseStudy: "Ver caso de estudio",
@@ -184,7 +204,7 @@ export const dictionary = {
       essays: {
         title: "Ensayos",
         intro:
-          "Textos extensos organizados por temática, desde economía aplicada hasta economía política y filosofía.",
+          "Ensayos breves y trabajos académicos de economía aplicada, finanzas y economía política. La mayor parte de mis ensayos filosóficos están ahora en el libro.",
         archive: "Archivo",
       },
       classes: {
@@ -192,6 +212,24 @@ export const dictionary = {
         intro:
           "Cursos estructurados de economía, finanzas y econometría, construidos a partir de lecciones grabadas, apuntes escritos y ejercicios.",
       },
+    },
+    book: {
+      eyebrow: "Libro en preparación",
+      readOnline: "Leer en línea",
+      readChapter: "Leer capítulo",
+      downloadFull: "Descargar el libro completo (PDF)",
+      downloadChapter: "Descargar capítulo (PDF)",
+      contents: "Índice",
+      part: "Parte",
+      chapter: "Capítulo",
+      inThisChapter: "En este capítulo",
+      previous: "Capítulo anterior",
+      next: "Capítulo siguiente",
+      backToContents: "Volver al índice",
+      spanishOnly: "En español",
+      chaptersCount: "capítulos",
+      homeTitle: "El libro",
+      homeBody: "La mayoría de mis ensayos se han convertido en capítulos de un solo libro que intenta formalizar un sistema de pensamiento: de la ontología y la teoría del conocimiento a la economía, el derecho y los límites del poder político.",
     },
     card: {
       featured: "Destacado",

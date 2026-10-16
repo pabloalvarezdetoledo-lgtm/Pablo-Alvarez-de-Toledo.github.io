@@ -6,7 +6,7 @@ import CategoryNav from "@/components/CategoryNav.astro";
 import TagFilter from "@/components/TagFilter.astro";
 import EmptyState from "@/components/EmptyState.astro";
 import { t } from "@/i18n/dictionary";
-import { essayCategoryPath, type EssayCategoryKey } from "@/i18n/config";
+import { essayCategoryPath, sectionPath, type EssayCategoryKey } from "@/i18n/config";
 import { withBase } from "@/lib/url";
 import { byLocale, byDateDesc, entrySlug } from "@/lib/content";
 
@@ -33,6 +33,7 @@ const langTargets = { en: "/en/essays/", es: "/es/ensayos/" };
     <div class="container">
       <h1>{dict.section.essays.title}</h1>
       <p class="measure-wide">{dict.section.essays.intro}</p>
+      <p class="book-note measure-wide">Los ensayos filosóficos, como «La libertad de equivocarse», «Populismo» o «La crisis migratoria», son ahora capítulos del libro. <a href={withBase(sectionPath("book", locale))}>Ir al libro →</a></p>
 
       <CategoryNav locale={locale} />
 
@@ -69,3 +70,13 @@ const langTargets = { en: "/en/essays/", es: "/es/ensayos/" };
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .book-note {
+    border-left: 3px solid var(--accent);
+    padding-left: var(--space-3);
+    font-size: var(--step--1);
+    color: var(--fg-muted);
+    margin-bottom: var(--space-6);
+  }
+</style>

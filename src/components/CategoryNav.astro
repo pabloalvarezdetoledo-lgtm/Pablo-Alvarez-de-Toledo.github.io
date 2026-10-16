@@ -2,13 +2,15 @@
 import { essayCategorySlugs, essayCategoryPath, type EssayCategoryKey, type Locale } from "@/i18n/config";
 import { categoryThemes } from "@/site.config";
 import { withBase } from "@/lib/url";
+import { activeEssayCategories } from "@/lib/content";
 
 export interface Props {
   locale: Locale;
   current?: EssayCategoryKey;
 }
 const { locale, current } = Astro.props;
-const categories = Object.keys(essayCategorySlugs) as EssayCategoryKey[];
+const active = await activeEssayCategories();
+const categories = (Object.keys(essayCategorySlugs) as EssayCategoryKey[]).filter((k) => active.includes(k));
 ---
 
 <nav class="category-nav" aria-label={locale === "en" ? "Essay categories" : "Categorías de ensayos"}>

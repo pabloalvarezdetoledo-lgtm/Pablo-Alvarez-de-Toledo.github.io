@@ -49,3 +49,10 @@ export function findTranslation<T extends { id: string; data: { translationKey?:
 export function isPublished(status: string): boolean {
   return status === "published" || status === "completed";
 }
+
+/** Essay categories that currently have at least one entry (empty categories are hidden). */
+export async function activeEssayCategories(): Promise<string[]> {
+  const { getCollection } = await import("astro:content");
+  const essays = await getCollection("essays");
+  return [...new Set(essays.map((e) => e.data.category as string))];
+}

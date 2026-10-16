@@ -6,6 +6,7 @@ import ProjectCard from "@/components/ProjectCard.astro";
 import EssayCard from "@/components/EssayCard.astro";
 import CourseCard from "@/components/CourseCard.astro";
 import Monogram from "@/components/Monogram.astro";
+import HomeBook from "@/components/HomeBook.astro";
 import { t } from "@/i18n/dictionary";
 import { sectionPath, essayCategoryPath, type EssayCategoryKey } from "@/i18n/config";
 import { withBase } from "@/lib/url";
@@ -54,6 +55,7 @@ const structuredData = personSchema(Astro.site);
         <p class="hero__statement measure">{heroCopy.en.statement}</p>
         <div class="hero__actions">
           <a class="button button--primary" href={withBase(sectionPath("cv", locale))}>{dict.home.heroCvLabel}</a>
+          <a class="button" href={withBase(sectionPath("book", locale))}>{dict.nav.book}</a>
           <a class="button" href={withBase(sectionPath("contact", locale))}>{dict.home.heroContactLabel}</a>
         </div>
       </div>
@@ -66,6 +68,8 @@ const structuredData = personSchema(Astro.site);
       </div>
     </div>
   </section>
+
+  <HomeBook locale="en" />
 
   <section class="section">
     <div class="container">

@@ -1,0 +1,19 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import BookLanding from "@/components/BookLanding.astro";
+import { book } from "@/lib/book";
+
+const langTargets = { en: "/en/book/", es: "/es/libro/" };
+---
+
+<BaseLayout
+  locale="en"
+  title={book.title.en}
+  description={book.intro.en}
+  path="/en/book/"
+  alternates={langTargets}
+  langTargets={langTargets}
+  current="book"
+>
+  <BookLanding locale="en" />
+</BaseLayout>

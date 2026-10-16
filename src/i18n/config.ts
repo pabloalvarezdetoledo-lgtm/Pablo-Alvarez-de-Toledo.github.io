@@ -12,6 +12,7 @@ export const localeNames: Record<Locale, string> = {
  * content frontmatter and internal links; `en`/`es` are the URL segments.
  */
 export const sectionSlugs = {
+  book: { en: "book", es: "libro" },
   research: { en: "research", es: "investigacion" },
   portfolio: { en: "portfolio", es: "portfolio" },
   essays: { en: "essays", es: "ensayos" },

@@ -1,0 +1,71 @@
+---
+import BookContents from "@/components/BookContents.astro";
+import { book, chapters } from "@/lib/book";
+import { sectionPath, type Locale } from "@/i18n/config";
+import { t } from "@/i18n/dictionary";
+import { withBase } from "@/lib/url";
+import { person } from "@/site.config";
+
+export interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const dict = t(locale).book;
+const first = chapters[0];
+---
+
+<section class="section book-landing">
+  <div class="container">
+    <header class="book-landing__head">
+      <p class="eyebrow">{dict.eyebrow}</p>
+      <h1>{book.title[locale]}</h1>
+      <p class="book-landing__author">{person.name}</p>
+      <p class="book-landing__intro measure-wide">{book.intro[locale]}</p>
+      <p class="book-landing__status">{book.status[locale]}</p>
+      <div class="book-landing__actions">
+        <a class="button button--primary" href={withBase(`${sectionPath("book", "es")}${first.slug}/`)}>
+          {dict.readOnline}{locale === "en" && ` (${dict.spanishOnly.toLowerCase()})`}
+        </a>
+        <a class="button" href={withBase(book.fullPdf)}>{dict.downloadFull}</a>
+      </div>
+    </header>
+
+    <h2 class="book-landing__contents">{dict.contents}</h2>
+    <BookContents locale={locale} />
+  </div>
+</section>
+
+<style>
+  .book-landing__head {
+    padding-bottom: var(--space-7);
+    margin-bottom: var(--space-7);
+    border-bottom: var(--border-thin);
+  }
+  .book-landing__author {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-style: italic;
+    color: var(--fg-muted);
+  }
+  .book-landing__intro {
+    font-size: var(--step-1);
+    line-height: 1.5;
+  }
+  .book-landing__status {
+    font-size: var(--step--1);
+    color: var(--fg-muted);
+    border-left: 3px solid var(--accent);
+    padding-left: var(--space-3);
+    max-width: var(--measure-wide);
+  }
+  .book-landing__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-top: var(--space-6);
+  }
+  .book-landing__contents {
+    font-size: var(--step-3);
+    margin-bottom: var(--space-6);
+  }
+</style>

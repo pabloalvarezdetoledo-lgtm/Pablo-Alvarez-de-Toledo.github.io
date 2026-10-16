@@ -15,6 +15,7 @@ const { locale, langTargets, current } = Astro.props;
 const nav = t(locale).nav;
 
 const links: { key: SectionKey; label: string }[] = [
+  { key: "book", label: nav.book },
   { key: "research", label: nav.research },
   { key: "portfolio", label: nav.portfolio },
   { key: "essays", label: nav.essays },

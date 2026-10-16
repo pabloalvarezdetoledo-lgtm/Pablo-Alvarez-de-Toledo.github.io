@@ -17,7 +17,7 @@ status: "published"
 featured: true
 pdf: "/files/research/eurosystem-liquidity-financial-duration.pdf"
 citation: "Álvarez de Toledo, P. (2026). Eurosystem Liquidity, Financial Duration and Relative Asset Valuation [Final degree thesis]. Universidad Antonio de Nebrija, Madrid."
-relatedResearch: ["legal-personality"]
+relatedResearch: []
 relatedPortfolio: ["bbva-equity-research"]
 relatedEssays: []
 cover: ./cover-eurosystem-liquidity.svg

@@ -23,6 +23,7 @@ const year = new Date().getFullYear();
 
     <nav aria-label="Footer">
       <ul>
+        <li><a href={withBase(sectionPath("book", locale))}>{nav.book}</a></li>
         <li><a href={withBase(sectionPath("research", locale))}>{nav.research}</a></li>
         <li><a href={withBase(sectionPath("portfolio", locale))}>{nav.portfolio}</a></li>
         <li><a href={withBase(sectionPath("essays", locale))}>{nav.essays}</a></li>

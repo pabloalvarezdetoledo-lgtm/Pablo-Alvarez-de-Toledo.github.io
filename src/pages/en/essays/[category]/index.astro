@@ -14,12 +14,14 @@ import { categoryThemes } from "@/site.config";
 import { withBase } from "@/lib/url";
 import { byLocale, byDateDesc, entrySlug } from "@/lib/content";
 import { resolveResearchRelated, resolvePortfolioRelated } from "@/lib/related";
+import { activeEssayCategories } from "@/lib/content";
 
 const locale = "en" as const;
 const dict = t(locale);
 
 export async function getStaticPaths() {
-  const keys = Object.keys(essayCategorySlugs) as EssayCategoryKey[];
+  const active = await activeEssayCategories();
+  const keys = (Object.keys(essayCategorySlugs) as EssayCategoryKey[]).filter((k) => active.includes(k));
   return keys.map((key) => ({
     params: { category: essayCategorySlugs[key].en },
     props: { categoryKey: key },

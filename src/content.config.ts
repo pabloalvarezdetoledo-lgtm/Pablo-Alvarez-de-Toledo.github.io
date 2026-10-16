@@ -14,8 +14,23 @@ const coverFields = (image: () => z.ZodType<ImageMetadata>) => ({
   focalPoint: z.string().optional(),
 });
 
+/**
+ * Entries that became chapters of the book (src/lib/book.ts). Excluded here so
+ * the site stays correct even if the old files are still on disk; they can be
+ * deleted safely.
+ */
+const movedToBook = [
+  "!**/el-derecho-a-equivocarse.md",
+  "!**/democracia-y-populismo.md",
+  "!**/democracy-and-populism.md",
+  "!**/crisis-migratoria-derecho-a-tener-derechos.md",
+  "!**/migration-crisis-right-to-have-rights.md",
+  "!**/fundamentos-filosoficos-personalidad-juridica.md",
+  "!**/philosophical-foundations-legal-personality.md",
+];
+
 const research = defineCollection({
-  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/research" }),
+  loader: glob({ pattern: ["**/*.{md,mdx}", ...movedToBook], base: "./src/content/research" }),
   schema: ({ image }) =>
     z
       .object({
@@ -96,7 +111,7 @@ const portfolio = defineCollection({
 });
 
 const essays = defineCollection({
-  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/essays" }),
+  loader: glob({ pattern: ["**/*.{md,mdx}", ...movedToBook], base: "./src/content/essays" }),
   schema: ({ image }) =>
     z
       .object({

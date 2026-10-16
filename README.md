@@ -191,3 +191,24 @@ This repository does **not** currently include a `CNAME` file or purchased domai
 ## What's still a placeholder
 
 Search the codebase for `TODO(pablo)` to find every explicitly-marked placeholder: the hero headline/statement, the About/CV biography bullets, the BBVA/Repsol equity research write-ups (problem/approach/result), the thesis abstract/findings, the forthcoming legal-personality paper, "El derecho a equivocarse" (structural draft only), the demo course's four lessons (no recordings), the CV PDF, and the LinkedIn/GitHub/email contact details. None of these contain fabricated results, recommendations or credentials — they are honestly marked as pending.
+
+## The book
+
+The **Libro / Book** section (`/es/libro/`, `/en/book/`) presents the book as a
+table of contents by parts, with one reading page per chapter (Spanish) and
+downloadable PDFs.
+
+- Chapter list, parts, titles and synopses (ES/EN): `src/lib/book.ts`.
+  Change the book title there once it is final.
+- Chapter text (generated, do not edit by hand): `src/book/chapters/<slug>.html`.
+- PDFs: `public/files/book/<slug>.pdf` and `public/files/book/libro-completo.pdf`.
+- To regenerate after revising the LaTeX sources:
+  `python scripts/build-book.py "C:/Users/pablo/Desktop/Libro"` (needs pandoc,
+  and a TeX distribution with latexmk, biblatex and biber for the PDFs;
+  add `--no-pdf` to update only the web text). The chapter order and file
+  names are in `scripts/chapters.tsv`.
+- `scripts/extra.bib` holds bibliography entries cited in the chapters but
+  missing from the local `referencias.bib`.
+- Essays that became chapters are excluded in `src/content.config.ts`
+  (`movedToBook`) and their old URLs redirect to the chapters
+  (`redirects` in `astro.config.mjs`).
