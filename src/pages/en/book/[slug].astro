@@ -1,0 +1,331 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import { book, chapters, parts, chapterPdf, fullTitle, type BookChapter } from "@/lib/book";
+import { sectionPath } from "@/i18n/config";
+import { t } from "@/i18n/dictionary";
+import { withBase } from "@/lib/url";
+import { person } from "@/site.config";
+import { articleSchema, breadcrumbSchema } from "@/lib/structuredData";
+
+const bodies = import.meta.glob<string>("/src/book/chapters/*.html", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+});
+
+export function getStaticPaths() {
+  return chapters.map((chapter) => ({ params: { slug: chapter.slug }, props: { chapter } }));
+}
+
+const { chapter } = Astro.props as { chapter: BookChapter };
+const locale = "en" as const;
+const dict = t(locale);
+const html = bodies[`/src/book/chapters/${chapter.slug}.html`] ?? "";
+const part = parts.find((p) => p.number === chapter.part)!;
+const index = chapters.findIndex((c) => c.slug === chapter.slug);
+const prev = chapters[index - 1];
+const next = chapters[index + 1];
+
+// Section list for the in-chapter contents, read from the generated HTML.
+// The chapter text itself is written in Spanish and is not translated.
+const sections = [...html.matchAll(/<h2 id="([^"]+)"[^>]*>([\s\S]*?)<\/h2>/g)]
+  .map((m) => ({ id: m[1], label: m[2].replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim() }))
+  .filter((s) => s.id !== "referencias");
+
+const bookPath = sectionPath("book", locale);
+const path = `${bookPath}${chapter.slug}/`;
+const esPath = `${sectionPath("book", "es")}${chapter.slug}/`;
+const langTargets = { en: path, es: esPath };
+const href = (slug: string) => withBase(`${bookPath}${slug}/`);
+
+const structuredData = [
+  articleSchema(Astro.site, {
+    title: chapter.titleEn,
+    description: chapter.description.en,
+    date: new Date("2026-10-16"),
+    path,
+  }),
+  breadcrumbSchema(Astro.site, [
+    { name: dict.nav.book, path: bookPath },
+    { name: chapter.titleEn, path },
+  ]),
+];
+---
+
+<BaseLayout
+  locale={locale}
+  title={`${chapter.titleEn} · ${book.title.en}`}
+  description={chapter.description.en}
+  path={path}
+  alternates={{ en: path, es: esPath }}
+  langTargets={langTargets}
+  current="book"
+  seoType="article"
+  structuredData={structuredData}
+>
+  <article class="section chapter">
+    <div class="container chapter__wrap">
+      <Breadcrumbs
+        items={[
+          { label: dict.nav.book, href: bookPath },
+          { label: `${dict.book.part} ${part.roman}`, href: bookPath },
+          { label: chapter.titleEn },
+        ]}
+      />
+
+      <header class="chapter__head">
+        <p class="eyebrow chapter__part">{dict.book.part} {part.roman} · {part.title.en}</p>
+        <p class="chapter__number">{dict.book.chapter} {chapter.number}</p>
+        <h1 class="chapter__title">{chapter.titleEn}</h1>
+        <p class="chapter__original-title" lang="es">{fullTitle(chapter)}</p>
+        <p class="chapter__author">{person.name}</p>
+        <div class="chapter__actions">
+          <a class="button" href={withBase(chapterPdf(chapter.slug))}>{dict.book.downloadChapter}</a>
+          <a class="button button--ghost" href={withBase(book.fullPdf)}>{dict.book.downloadFull}</a>
+        </div>
+        <p class="chapter__status">{book.status.en}</p>
+        <p class="chapter__lang-note">{dict.book.spanishOnly} — {dict.book.chapterInSpanish}</p>
+      </header>
+
+      {
+        sections.length > 1 && (
+          <details class="chapter__toc" open>
+            <summary>{dict.book.inThisChapter}</summary>
+            <ol lang="es">
+              {sections.map((s) => (
+                <li>
+                  <a href={`#${s.id}`}>{s.label}</a>
+                </li>
+              ))}
+            </ol>
+          </details>
+        )
+      }
+
+      <div class="chapter__body prose-book" lang="es" set:html={html} />
+
+      <nav class="chapter__pager" aria-label={dict.book.contents}>
+        {
+          prev ? (
+            <a class="chapter__pager-link" href={href(prev.slug)}>
+              <span class="chapter__pager-dir">← {dict.book.previous}</span>
+              <span class="chapter__pager-title">{prev.number}. {prev.titleEn}</span>
+            </a>
+          ) : (
+            <span />
+          )
+        }
+        {
+          next ? (
+            <a class="chapter__pager-link chapter__pager-link--next" href={href(next.slug)}>
+              <span class="chapter__pager-dir">{dict.book.next} →</span>
+              <span class="chapter__pager-title">{next.number}. {next.titleEn}</span>
+            </a>
+          ) : (
+            <span />
+          )
+        }
+      </nav>
+      <p class="chapter__back"><a href={withBase(bookPath)}>{dict.book.backToContents}</a></p>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .chapter__wrap {
+    max-width: calc(var(--measure-wide) + 2 * var(--space-5));
+  }
+  .chapter__head {
+    margin-bottom: var(--space-6);
+  }
+  .chapter__part {
+    color: var(--accent);
+  }
+  .chapter__number {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-style: italic;
+    color: var(--fg-muted);
+    margin: var(--space-5) 0 var(--space-2);
+  }
+  .chapter__title {
+    font-size: var(--step-5);
+    margin-bottom: var(--space-2);
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+  .chapter__original-title {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--step-0);
+    color: var(--fg-muted);
+    margin-bottom: var(--space-3);
+  }
+  .chapter__subtitle {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    line-height: 1.25;
+    color: var(--fg-muted);
+  }
+  .chapter__author {
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--fg-muted);
+  }
+  .chapter__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin: var(--space-5) 0 var(--space-4);
+  }
+  .chapter__status {
+    font-size: var(--step--1);
+    color: var(--fg-muted);
+    border-left: 3px solid var(--accent);
+    padding-left: var(--space-3);
+  }
+  .chapter__lang-note {
+    font-size: var(--step--1);
+    font-style: italic;
+    color: var(--fg-muted);
+    margin-top: var(--space-2);
+  }
+  .chapter__toc {
+    border-top: var(--border-thin);
+    border-bottom: var(--border-thin);
+    padding-block: var(--space-4);
+    margin-bottom: var(--space-7);
+  }
+  .chapter__toc summary {
+    cursor: pointer;
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+  .chapter__toc ol {
+    margin: var(--space-3) 0 0;
+    padding-left: 1.4em;
+    font-family: var(--font-display);
+    font-size: var(--step-0);
+  }
+  .chapter__toc li + li {
+    margin-top: var(--space-1);
+  }
+  .chapter__pager {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+    margin-top: var(--space-8);
+    padding-top: var(--space-6);
+    border-top: var(--border-thin);
+  }
+  .chapter__pager-link {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    text-decoration: none;
+    color: var(--fg);
+    padding: var(--space-4);
+    border: var(--border-thin);
+    background: var(--color-surface);
+    transition: border-color var(--transition-fast);
+  }
+  .chapter__pager-link:hover {
+    border-color: var(--fg);
+  }
+  .chapter__pager-link--next {
+    text-align: right;
+  }
+  .chapter__pager-dir {
+    font-size: var(--step--1);
+    font-weight: 600;
+    color: var(--fg-muted);
+  }
+  .chapter__pager-title {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    line-height: 1.25;
+  }
+  .chapter__back {
+    margin-top: var(--space-5);
+    font-size: var(--step--1);
+  }
+
+  /* Book prose: serif, generous measure, quiet headings. */
+  .prose-book {
+    font-family: var(--font-display);
+    font-size: clamp(1.1rem, 1.05rem + 0.25vw, 1.25rem);
+    line-height: 1.65;
+    hyphens: auto;
+  }
+  .prose-book :global(p) {
+    margin: 0;
+    text-indent: 1.5em;
+  }
+  .prose-book :global(h2 + p),
+  .prose-book :global(blockquote + p),
+  .prose-book :global(math + p),
+  .prose-book :global(p:first-child) {
+    text-indent: 0;
+  }
+  .prose-book :global(h2) {
+    font-size: var(--step-3);
+    margin: var(--space-8) 0 var(--space-5);
+    scroll-margin-top: 6rem;
+  }
+  .prose-book :global(h2:first-child) {
+    margin-top: 0;
+  }
+  .prose-book :global(blockquote) {
+    margin: var(--space-5) 0;
+    font-style: normal;
+    color: var(--fg);
+  }
+  .prose-book :global(blockquote p) {
+    text-indent: 0;
+  }
+  .prose-book :global(math[display="block"]) {
+    margin: var(--space-5) auto;
+    overflow-x: auto;
+    max-width: 100%;
+  }
+  .prose-book :global(table) {
+    font-family: var(--font-body);
+    font-size: var(--step--1);
+    margin: var(--space-5) 0;
+    display: block;
+    overflow-x: auto;
+  }
+  .prose-book :global(.citation) {
+    white-space: normal;
+  }
+  .prose-book :global(.chapter-refs-title) {
+    font-size: var(--step-2);
+    margin-top: var(--space-8);
+    padding-top: var(--space-6);
+    border-top: var(--border-thin);
+  }
+  .prose-book :global(#refs) {
+    font-family: var(--font-body);
+    font-size: var(--step--1);
+    line-height: 1.5;
+  }
+  .prose-book :global(.csl-entry) {
+    padding-left: 1.5em;
+    text-indent: -1.5em;
+    margin-bottom: var(--space-2);
+    overflow-wrap: anywhere;
+  }
+  @media (max-width: 600px) {
+    .chapter__pager {
+      grid-template-columns: 1fr;
+    }
+    .chapter__pager-link--next {
+      text-align: left;
+    }
+  }
+</style>

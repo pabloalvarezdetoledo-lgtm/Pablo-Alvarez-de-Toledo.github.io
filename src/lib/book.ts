@@ -5,8 +5,10 @@
  * with pandoc and live in src/book/chapters/<slug>.html. PDFs live in
  * public/files/book/. See README.md § "The book" for how to regenerate both.
  *
- * The book is written in Spanish; English pages show the table of contents
- * and synopses and link to the Spanish chapters.
+ * The book is written in Spanish and that text is never translated. Both
+ * locales get their own chapter URL and UI chrome (title, breadcrumbs,
+ * buttons, part/chapter labels); the chapter body and PDFs are the same file
+ * either way.
  */
 import type { Locale } from "@/i18n/config";
 

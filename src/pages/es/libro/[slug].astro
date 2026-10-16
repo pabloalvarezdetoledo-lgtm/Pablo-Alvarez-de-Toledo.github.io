@@ -34,7 +34,8 @@ const sections = [...html.matchAll(/<h2 id="([^"]+)"[^>]*>([\s\S]*?)<\/h2>/g)]
 
 const bookPath = sectionPath("book", locale);
 const path = `${bookPath}${chapter.slug}/`;
-const langTargets = { es: path, en: "/en/book/" };
+const enPath = `${sectionPath("book", "en")}${chapter.slug}/`;
+const langTargets = { es: path, en: enPath };
 const href = (slug: string) => withBase(`${bookPath}${slug}/`);
 
 const structuredData = [
@@ -56,7 +57,7 @@ const structuredData = [
   title={`${chapter.title} · ${book.title.es}`}
   description={chapter.description.es}
   path={path}
-  alternates={{ es: path }}
+  alternates={{ es: path, en: enPath }}
   langTargets={langTargets}
   current="book"
   seoType="article"

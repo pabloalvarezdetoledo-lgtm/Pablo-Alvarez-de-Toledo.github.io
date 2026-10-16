@@ -11,8 +11,8 @@ export interface Props {
 }
 const { locale, compact = false } = Astro.props;
 const dict = t(locale).book;
-// Chapter pages exist only in Spanish.
-const chapterHref = (slug: string) => withBase(`${sectionPath("book", "es")}${slug}/`);
+// The chapter text is always in Spanish, but each locale has its own URL and UI chrome.
+const chapterHref = (slug: string) => withBase(`${sectionPath("book", locale)}${slug}/`);
 ---
 
 <ol class="book-toc" class:list={[{ "book-toc--compact": compact }]}>
@@ -26,11 +26,11 @@ const chapterHref = (slug: string) => withBase(`${sectionPath("book", "es")}${sl
         <ol class="book-toc__chapters">
           {chaptersInPart(part.number).map((c) => (
             <li class="book-toc__chapter">
-              <a href={chapterHref(c.slug)} class="book-toc__link" lang="es">
+              <a href={chapterHref(c.slug)} class="book-toc__link" lang={locale === "es" ? "es" : undefined}>
                 <span class="book-toc__num">{c.number}</span>
                 <span class="book-toc__title">
                   {locale === "es" ? fullTitle(c) : c.titleEn}
-                  {locale === "en" && <span class="book-toc__es">{fullTitle(c)}</span>}
+                  {locale === "en" && <span class="book-toc__es" lang="es">{fullTitle(c)}</span>}
                 </span>
               </a>
               {!compact && <p class="book-toc__desc" lang={locale}>{c.description[locale]}</p>}

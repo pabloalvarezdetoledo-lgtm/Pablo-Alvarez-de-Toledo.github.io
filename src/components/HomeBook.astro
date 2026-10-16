@@ -10,7 +10,7 @@ export interface Props {
 const { locale } = Astro.props;
 const dict = t(locale).book;
 const bookHref = withBase(sectionPath("book", locale));
-const firstHref = withBase(`${sectionPath("book", "es")}${chapters[0].slug}/`);
+const firstHref = withBase(`${sectionPath("book", locale)}${chapters[0].slug}/`);
 ---
 
 <section class="section home-book">

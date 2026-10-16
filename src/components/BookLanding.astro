@@ -23,8 +23,8 @@ const first = chapters[0];
       <p class="book-landing__intro measure-wide">{book.intro[locale]}</p>
       <p class="book-landing__status">{book.status[locale]}</p>
       <div class="book-landing__actions">
-        <a class="button button--primary" href={withBase(`${sectionPath("book", "es")}${first.slug}/`)}>
-          {dict.readOnline}{locale === "en" && ` (${dict.spanishOnly.toLowerCase()})`}
+        <a class="button button--primary" href={withBase(`${sectionPath("book", locale)}${first.slug}/`)}>
+          {dict.readOnline}
         </a>
         <a class="button" href={withBase(book.fullPdf)}>{dict.downloadFull}</a>
       </div>
